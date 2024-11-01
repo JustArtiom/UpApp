@@ -26,7 +26,7 @@
  * ```
  */
 
-import "./global.css";
+import "./assets/css/global.css";
 import "./app";
 
 console.log(

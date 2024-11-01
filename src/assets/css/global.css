@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "Inter";
+    src: url("../fonts/Inter/Inter_28pt-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url("../fonts/Inter/Inter_28pt-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: bold;
+}
+
+@font-face {
+    font-family: "Inter", sans-serif;
+    src: url("../fonts/Inter/Inter_28pt-Italic.ttf") format("truetype");
+    font-weight: 400;
+    font-style: italic;
+}
+
+:root {
+    --bg-action-bar: #000000;
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1d1d1d;
+
+    --text-primary: #fff;
+
+    --stroke-primary: #1a1a1a;
+}
+
+body {
+    font-family: "Inter";
+    margin: auto;
+
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.window-dragable-element {
+    -webkit-app-region: drag;
+}

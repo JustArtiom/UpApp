@@ -1,4 +1,5 @@
 import { app, BrowserWindow } from "electron";
+import { registerIpcEvents } from "./utils/ipcRegister";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
@@ -8,7 +9,7 @@ if (require("electron-squirrel-startup")) {
 }
 
 const gotTheLock = app.requestSingleInstanceLock();
-let mainWindow: BrowserWindow = undefined;
+export let mainWindow: BrowserWindow = undefined;
 
 if (!gotTheLock) {
     app.quit();
@@ -21,18 +22,22 @@ if (!gotTheLock) {
     });
 
     const createMainWindow = () => {
+        console.log(MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY);
         mainWindow = new BrowserWindow({
             title: "UpApp",
+            titleBarStyle: "hiddenInset",
             frame: false,
             height: 600,
-            width: 800,
+            width: 900,
             webPreferences: {
                 preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+                contextIsolation: true,
+                nodeIntegration: false,
             },
         });
 
+        registerIpcEvents();
         mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-        // mainWindow.webContents.openDevTools();
 
         return mainWindow;
     };
@@ -53,3 +58,4 @@ if (!gotTheLock) {
         }
     });
 }
+export { BrowserWindow };
