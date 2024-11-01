@@ -2,7 +2,7 @@ import { ReactComponent as CloseIcon } from "~/assets/svg/actions/close.svg";
 import { ReactComponent as MinMaxIcon } from "~/assets/svg/actions/minmax.svg";
 import { ReactComponent as MinimiseIcon } from "~/assets/svg/actions/minimise.svg";
 
-import Button from "./buttons/Button";
+import Button from "./Button";
 import { useEffect } from "react";
 
 const actionButtons: {

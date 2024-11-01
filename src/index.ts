@@ -22,7 +22,6 @@ if (!gotTheLock) {
     });
 
     const createMainWindow = () => {
-        console.log(MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY);
         mainWindow = new BrowserWindow({
             title: "UpApp",
             titleBarStyle: "hiddenInset",
