@@ -18,17 +18,23 @@ function ErrorFallback({ error }: { error: any }) {
 
 export default function Router() {
     return (
-        <div className="flex flex-col w-full min-h-screen">
+        <div className="h-screen flex flex-col">
             <ActionBar />
-            <ErrorBoundary FallbackComponent={ErrorFallback}>
-                <HashRouter>
-                    <Routes>
-                        <Route path="/" element={<Booting />} />
-                        <Route path="/welcome" element={<Welcome />} />
-                        <Route path="*" element={<>404 {document.URL}</>} />
-                    </Routes>
-                </HashRouter>
-            </ErrorBoundary>
+
+            <div
+                id="appbody"
+                className="flex-1 overflow-y-auto custom-scrollbar"
+            >
+                <ErrorBoundary FallbackComponent={ErrorFallback}>
+                    <HashRouter>
+                        <Routes>
+                            <Route path="/" element={<Booting />} />
+                            <Route path="/welcome" element={<Welcome />} />
+                            <Route path="*" element={<>404 {document.URL}</>} />
+                        </Routes>
+                    </HashRouter>
+                </ErrorBoundary>
+            </div>
         </div>
     );
 }

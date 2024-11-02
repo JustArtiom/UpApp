@@ -19,7 +19,6 @@ export default function Booting() {
                 // Just so it looks cool
                 await new Promise((res) => setTimeout(res, 1000));
 
-                console.log("successfully loaded");
                 setOpacity(0);
                 setTimeout(() => {
                     if (servers.length <= 0) {
@@ -36,7 +35,7 @@ export default function Booting() {
 
     return (
         <div
-            className={`flex-1 flex flex-col justify-center items-center transition-opacity `}
+            className={`h-full flex flex-col justify-center items-center transition-opacity p-10`}
             style={{
                 opacity: opacity / 100,
                 transitionDuration: transitionTime.toString() + "ms",

@@ -36,7 +36,7 @@ export default function ActionBar() {
         console.log(window);
     });
     return (
-        <div className="w-full bg-[var(--bg-action-bar)] flex items-center select-none border-[var(--stroke-primary)] border-b-[1px]">
+        <div className="h-[36px] w-full bg-[var(--bg-action-bar)] flex items-center select-none border-[var(--stroke-primary)] border-b-[1px]">
             <p className="font-bold text-[16px] px-5 flex-1 window-dragable-element">
                 UA
             </p>
