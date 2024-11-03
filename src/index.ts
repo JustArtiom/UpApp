@@ -26,7 +26,7 @@ if (!gotTheLock) {
             title: "UpApp",
             titleBarStyle: "hiddenInset",
             frame: false,
-            height: 600,
+            height: 900,
             width: 900,
             webPreferences: {
                 preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,

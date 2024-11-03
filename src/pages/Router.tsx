@@ -1,10 +1,13 @@
-import { Routes, Route, HashRouter } from "react-router-dom";
+import { Routes, Route, HashRouter, useNavigate } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
-import Booting from "./booting";
-import Welcome from "./welcome";
+import Booting from "~/components/booting";
+import AddServer from "./addServer";
 import ActionBar from "~/components/actionBar";
 import ContextProvider from "~/context";
 import NotificationLayout from "~/layouts/notifications";
+import AppMainPage from ".";
+import { useServerContext } from "~/context/ServersContext";
+import { useEffect } from "react";
 
 function ErrorFallback({ error }: { error: any }) {
     return (
@@ -12,8 +15,10 @@ function ErrorFallback({ error }: { error: any }) {
             role="alert"
             className="flex items-center flex-1 justify-center flex-col"
         >
-            <p className="font-bold text-2xl mb-5">Render Error</p>
-            <pre className="max-w-[60%] text-red-400">{error.message}</pre>
+            <p className="font-bold text-2xl mb-5 mt-5">Render Error</p>
+            <pre className="max-w-[60%] text-red-400 break-words whitespace-pre-wrap ">
+                {error.message}
+            </pre>
         </div>
     );
 }
@@ -38,15 +43,28 @@ function Layout({ children }: { children: React.ReactNode }) {
     );
 }
 
+const HandleServerSelection = () => {
+    const { servers } = useServerContext();
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (servers.length) navigate(`/${servers[0].id}`);
+        else navigate(`/add-server`);
+    }, [servers]);
+    return <div></div>;
+};
+
 export default function Router() {
     return (
         <Layout>
             <HashRouter>
-                <Routes>
-                    <Route path="/" element={<Booting />} />
-                    <Route path="/welcome" element={<Welcome />} />
-                    <Route path="*" element={<>404 {document.URL}</>} />
-                </Routes>
+                <Booting>
+                    <Routes>
+                        <Route path="/" element={<HandleServerSelection />} />
+                        <Route path="/add-server" element={<AddServer />} />
+                        <Route path="/:server_id" element={<AppMainPage />} />
+                        <Route path="*" element={<>404 {document.URL}</>} />
+                    </Routes>
+                </Booting>
             </HashRouter>
         </Layout>
     );

@@ -37,4 +37,15 @@ export class Storage {
         if (res === true) return true;
         throw res;
     }
+
+    async saveInDatabase() {
+        if (!this.id)
+            throw new Error("Ping the storage without initializing the client");
+        const res = await window.api.db
+            .saveStorage(this.ip, this.port, this.ssl, this.access, this.secret)
+            .catch((err) => err);
+
+        if (res === true) return true;
+        throw res;
+    }
 }

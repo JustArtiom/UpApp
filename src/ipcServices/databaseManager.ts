@@ -1,13 +1,19 @@
 import * as sqlite from "sqlite-electron";
 
 const sqltables = `
+CREATE TABLE IF NOT EXISTS user (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name VARCHAR(255)
+);
+
 CREATE TABLE IF NOT EXISTS storages (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     ip VARCHAR(255) NOT NULL,
     port INTEGER NOT NULL,
     ssl BOOLEAN NOT NULL,
     public TEXT NOT NULL,
-    secret TEXT NOT NULL
+    secret TEXT NOT NULL,
+    UNIQUE(ip, port)
 );
 
 CREATE TABLE IF NOT EXISTS videos (
@@ -55,5 +61,31 @@ export const database = {
 
     getServers: async (_event: Electron.IpcMainEvent) => {
         return await sqlite.fetchMany("SELECT * FROM storages", 100);
+    },
+
+    getUser: async () => {
+        const users = await sqlite.fetchMany("SELECT * FROM user", 100);
+        if (users.length) return users[0];
+        return null;
+    },
+
+    saveUser: async (_event: Electron.IpcMainEvent, username: string) => {
+        return await sqlite.executeQuery("INSERT INTO user (name) values(?)", [
+            username,
+        ]);
+    },
+
+    saveStorage: async (
+        _event: Electron.IpcMainEvent,
+        ip: string,
+        port: number,
+        ssl: boolean,
+        access: string,
+        secret: string
+    ) => {
+        return await sqlite.executeQuery(
+            "INSERT INTO storages (ip, port, ssl, public, secret) VALUES (?,?,?,?,?) ON CONFLICT(ip, port) DO UPDATE SET ssl = EXCLUDED.ssl, public = EXCLUDED.public, secret = EXCLUDED.secret;",
+            [ip, port, ssl ? 1 : 0, access, secret]
+        );
     },
 };

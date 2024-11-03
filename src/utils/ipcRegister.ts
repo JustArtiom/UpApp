@@ -10,6 +10,9 @@ export const registerIpcEvents = () => {
     ipcMain.handle("database-initialize", database.initializeDatabase);
     ipcMain.handle("db-query", database.execQuery);
     ipcMain.handle("db-get-servers", database.getServers);
+    ipcMain.handle("db-get-user", database.getUser);
+    ipcMain.handle("db-save-user", database.saveUser);
+    ipcMain.handle("db-save-storage", database.saveStorage);
 
     ipcMain.handle("storage-client-create", storage.createClient);
     ipcMain.handle("storage-ping", storage.ping);

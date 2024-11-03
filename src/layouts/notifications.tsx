@@ -1,18 +1,17 @@
-import { useErrorContext } from "~/context/errorContext";
+import { useNotificationContext } from "~/context/NotificationContext";
+import Notification from "~/components/Notification";
 
 const NotificationLayout = () => {
-    const { errors, removeError } = useErrorContext();
+    const { notifications } = useNotificationContext();
 
     return (
-        <div className="absolute bottom-0 right-0 z-20">
-            {errors.map((error) => (
-                <div
-                    key={error.id}
-                    className="bg-[var(--bg-primary)] rounded-xl border-[1px] p-2 w-[300px] border-red-500 m-5 hover:scale-[101%] transition-transform cursor-pointer"
-                    onClick={() => removeError(error.id)}
-                >
-                    <p>{error.message}</p>
-                </div>
+        <div className="absolute bottom-0 right-0 z-20 overflow-hidden">
+            {notifications.map((notif, i) => (
+                <Notification
+                    key={notif.id}
+                    notification={notif}
+                    newNotif={i + 1 - notifications.length == 0}
+                />
             ))}
         </div>
     );

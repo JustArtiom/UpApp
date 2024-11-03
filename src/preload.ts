@@ -16,6 +16,25 @@ const api = {
             values: Array<string | number | null | Buffer>
         ) => ipcRenderer.invoke("db-query", query, values),
         getServers: () => ipcRenderer.invoke("db-get-servers"),
+        getUser: () => ipcRenderer.invoke("db-get-user"),
+        saveUser: (username: string) =>
+            ipcRenderer.invoke("db-save-user", username),
+        saveStorage: (
+            ip: string,
+            port: number,
+            ssl: boolean,
+            access: string,
+            secret: string
+        ) => {
+            return ipcRenderer.invoke(
+                "db-save-storage",
+                ip,
+                port,
+                ssl,
+                access,
+                secret
+            );
+        },
     },
 
     storage: {
