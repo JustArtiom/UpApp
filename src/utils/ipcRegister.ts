@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { database, window } from "../ipcServices";
+import { database, storage, window } from "../ipcServices";
 
 export const registerIpcEvents = () => {
     ipcMain.on("window-minimize", window.minimize);
@@ -10,4 +10,7 @@ export const registerIpcEvents = () => {
     ipcMain.handle("database-initialize", database.initializeDatabase);
     ipcMain.handle("db-query", database.execQuery);
     ipcMain.handle("db-get-servers", database.getServers);
+
+    ipcMain.handle("storage-client-create", storage.createClient);
+    ipcMain.handle("storage-ping", storage.ping);
 };

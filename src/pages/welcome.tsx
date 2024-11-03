@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import Button from "~/components/Button";
-import Input from "~/components/Input";
+import AddServerForm from "~/components/web/AddServer";
+import { useErrorContext } from "~/context/errorContext";
+import { Storage } from "~/utils/services/s3";
 
 export default function Welcome() {
     const [opacity, setOpacity] = useState(0);
     const [animate, setAnimate] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const transitionTime = useMemo(() => 1000, []);
+    const { addError } = useErrorContext();
 
     useEffect(() => {
         const appbody = document.getElementById("appbody");
@@ -22,16 +24,43 @@ export default function Welcome() {
         }, 2000);
     }, []);
 
+    async function submitForm(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setIsLoading(true);
+
+        const formData = new FormData(e.currentTarget);
+        const name = formData.get("yourName") as string | undefined;
+        const ip = formData.get("serverIp") as string;
+        const port = formData.get("serverPort") as string;
+        const uname = formData.get("username") as string;
+        const password = formData.get("password") as string;
+        const ssl = formData.get("ssl") as null | "on";
+
+        const sclient = new Storage(ip, Number(port), uname, password, !!ssl);
+        await sclient.createClient();
+        await sclient
+            .ping()
+            .then(() => {
+                alert("it worked blud");
+            })
+            .catch((err) => {
+                addError(err.toString());
+                setIsLoading(false);
+            });
+    }
+
     return (
-        <div
-            className="transition-all w-full min-h-full flex flex-col items-center justify-center py-10"
-            style={{
-                opacity: opacity,
-                transitionDuration: transitionTime + "ms",
-                transform: animate ? "translateY(0)" : "translateY(calc(20vh))",
-            }}
-        >
-            <div className="flex flex-col items-center w-full">
+        <div className="transition-all w-full min-h-full flex flex-col items-center justify-center py-10">
+            <div
+                className="flex flex-col items-center w-full"
+                style={{
+                    opacity: opacity,
+                    transitionDuration: transitionTime + "ms",
+                    transform: animate
+                        ? "translateY(0)"
+                        : "translateY(calc(25vh))",
+                }}
+            >
                 <p className="mb-1 font-bold text-2xl">Welcome to UpApp</p>
                 <p className="text-gray-600">
                     Lets get on with some configuration
@@ -44,74 +73,11 @@ export default function Welcome() {
                         transitionDuration: "1s",
                     }}
                 >
-                    <Input
-                        id={"You name"}
-                        labelTitle={
-                            <p className="text-lg p-2 pt-3">
-                                Your Name{" "}
-                                <span className="text-gray-600 font-normal text-sm">
-                                    (optional)
-                                </span>
-                            </p>
-                        }
-                        variant="transparent"
-                        placeholder="Nathan"
-                        border="primary"
+                    <AddServerForm
+                        askFirstName={true}
+                        isLoading={isLoading}
+                        onSubmit={submitForm}
                     />
-                    <div className="flex gap-5">
-                        <Input
-                            id={"Server Ip"}
-                            labelTitle={
-                                <p className="text-lg p-2 pt-3">Server Ip</p>
-                            }
-                            variant="transparent"
-                            placeholder="127.0.0.1"
-                            border="primary"
-                            divClassName="flex-1"
-                        />
-                        <Input
-                            id={"Server Port"}
-                            labelTitle={
-                                <p className="text-lg p-2 pt-3">Port</p>
-                            }
-                            variant="transparent"
-                            border="primary"
-                            placeholder="4000"
-                            divClassName="w-[100px]"
-                        />
-                    </div>
-                    <Input
-                        id={"Username"}
-                        labelTitle={
-                            <p className="text-lg p-2 pt-3">Username</p>
-                        }
-                        variant="transparent"
-                        border="primary"
-                        placeholder="Nathannnn69"
-                    />
-                    <Input
-                        id={"Password"}
-                        labelTitle={
-                            <p className="text-lg p-2 pt-3">Password</p>
-                        }
-                        type="password"
-                        variant="transparent"
-                        border="primary"
-                    />
-                    <div className="mt-5 flex justify-center">
-                        <Button
-                            variant="primary"
-                            size="md"
-                            className="w-[110px]"
-                            isLoading={isLoading}
-                            disabled={isLoading}
-                            onClick={() => {
-                                setIsLoading((a) => !a);
-                            }}
-                        >
-                            Connect
-                        </Button>
-                    </div>
                 </div>
             </div>
         </div>

@@ -17,6 +17,29 @@ const api = {
         ) => ipcRenderer.invoke("db-query", query, values),
         getServers: () => ipcRenderer.invoke("db-get-servers"),
     },
+
+    storage: {
+        createClient: (
+            ip: string,
+            port: number,
+            ssl: boolean,
+            access: string,
+            secret: string
+        ) => {
+            return ipcRenderer.invoke(
+                "storage-client-create",
+                ip,
+                port,
+                ssl,
+                access,
+                secret
+            );
+        },
+
+        ping: (id: string) => {
+            return ipcRenderer.invoke("storage-ping", id);
+        },
+    },
 };
 
 export type ApiContext = typeof api;

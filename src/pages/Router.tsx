@@ -3,6 +3,8 @@ import { ErrorBoundary } from "react-error-boundary";
 import Booting from "./booting";
 import Welcome from "./welcome";
 import ActionBar from "~/components/actionBar";
+import ContextProvider from "~/context";
+import NotificationLayout from "~/layouts/notifications";
 
 function ErrorFallback({ error }: { error: any }) {
     return (
@@ -16,25 +18,36 @@ function ErrorFallback({ error }: { error: any }) {
     );
 }
 
-export default function Router() {
+function Layout({ children }: { children: React.ReactNode }) {
     return (
         <div className="h-screen flex flex-col">
-            <ActionBar />
+            <ContextProvider>
+                <NotificationLayout />
+                <ActionBar />
 
-            <div
-                id="appbody"
-                className="flex-1 overflow-y-auto custom-scrollbar"
-            >
-                <ErrorBoundary FallbackComponent={ErrorFallback}>
-                    <HashRouter>
-                        <Routes>
-                            <Route path="/" element={<Booting />} />
-                            <Route path="/welcome" element={<Welcome />} />
-                            <Route path="*" element={<>404 {document.URL}</>} />
-                        </Routes>
-                    </HashRouter>
-                </ErrorBoundary>
-            </div>
+                <div
+                    id="appbody"
+                    className="flex-1 overflow-y-auto custom-scrollbar"
+                >
+                    <ErrorBoundary FallbackComponent={ErrorFallback}>
+                        {children}
+                    </ErrorBoundary>
+                </div>
+            </ContextProvider>
         </div>
+    );
+}
+
+export default function Router() {
+    return (
+        <Layout>
+            <HashRouter>
+                <Routes>
+                    <Route path="/" element={<Booting />} />
+                    <Route path="/welcome" element={<Welcome />} />
+                    <Route path="*" element={<>404 {document.URL}</>} />
+                </Routes>
+            </HashRouter>
+        </Layout>
     );
 }
