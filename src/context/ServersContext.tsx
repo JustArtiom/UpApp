@@ -1,11 +1,4 @@
-import React, {
-    createContext,
-    useContext,
-    useState,
-    ReactNode,
-    useRef,
-} from "react";
-import AddServer from "~/pages/addServer";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Storage } from "~/utils/services/s3";
 
 interface ServersContextType {

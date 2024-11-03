@@ -3,6 +3,8 @@ import { useUserContext } from "~/context/UserContext";
 import { ReactComponent as PlusIcon } from "~/assets/svg/add.svg";
 import { ReactComponent as FolderCreateIcon } from "~/assets/svg/create-folder.svg";
 import Navigation from "~/layouts/Navigation";
+import SearchBar from "~/components/search";
+import ListClips from "~/layouts/ListClips";
 
 const actionButtons = [
     {
@@ -21,8 +23,8 @@ const AppMainPage = () => {
     return (
         <div className="w-full h-full flex p-4 gap-4">
             <Navigation />
-            <div className="flex-1 p-10">
-                <p className="mb-5  text-2xl font-bold">
+            <div className="flex flex-col min-h-full w-full p-10 overflow-y-auto">
+                <p className="mb-5 text-2xl font-bold">
                     Welcome {username || "Traveler"}
                 </p>
                 <div className="my-10 flex gap-10 flex-wrap">
@@ -38,6 +40,10 @@ const AppMainPage = () => {
                     ))}
                 </div>
                 <p className="my-5 text-xl font-bold">All files</p>
+                <div className="flex my-5">
+                    <SearchBar />
+                </div>
+                <ListClips />
             </div>
         </div>
     );
