@@ -86,7 +86,7 @@ const AddServerForm = ({
             ) : (
                 ""
             )}
-            <div className="flex gap-5">
+            <div className="w-full flex md:gap-5 md:flex-row flex-wrap">
                 <Input
                     id={"serverIp"}
                     name={"serverIp"}
@@ -94,7 +94,7 @@ const AddServerForm = ({
                     variant="transparent"
                     placeholder="127.0.0.1"
                     border="primary"
-                    divClassName="flex-1"
+                    divClassName="md:flex-1 w-full"
                     className={iperr ? "border-red-500 shake-error" : ""}
                     onChange={() => setIperr(false)}
                     required
@@ -107,7 +107,7 @@ const AddServerForm = ({
                     type="number"
                     border="primary"
                     placeholder="4000"
-                    divClassName="w-[100px]"
+                    divClassName="md:w-[100px] w-full"
                     className={iperr ? "border-red-500 shake-error" : ""}
                     onChange={() => setIperr(false)}
                     required
