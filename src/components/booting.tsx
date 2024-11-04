@@ -45,7 +45,7 @@ export default function Booting({ children }: { children: React.ReactNode }) {
                             !!server.ssl
                         );
                         await scleint.createClient();
-                        if (await scleint.ping()) {
+                        if (await scleint.ping().catch(() => false)) {
                             await scleint.initializeDefault();
                         }
                         addServer(scleint);

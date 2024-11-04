@@ -72,6 +72,25 @@ const api = {
         fetchBucketFiles: (id: string, bucket: string) => {
             return ipcRenderer.invoke("storage-fetch-bucket-files", id, bucket);
         },
+
+        uploadFile: (
+            id: string,
+            bucket: string,
+            file_name: string,
+            data: any,
+            size?: number,
+            isVideo?: boolean
+        ) => {
+            return ipcRenderer.invoke(
+                "storage-file-upload",
+                id,
+                bucket,
+                file_name,
+                data,
+                size,
+                isVideo
+            );
+        },
     },
 };
 

@@ -19,4 +19,5 @@ export const registerIpcEvents = () => {
     ipcMain.handle("storage-fetch-buckets", storage.fetchBuckets);
     ipcMain.handle("storage-create-bucket", storage.createBucket);
     ipcMain.handle("storage-fetch-bucket-files", storage.fetchBucketFiles);
+    ipcMain.handle("storage-file-upload", storage.uploadFile);
 };

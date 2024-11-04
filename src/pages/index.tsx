@@ -7,6 +7,9 @@ import SearchBar from "~/components/search";
 import ListClips from "~/layouts/ListClips";
 import FileDropOverlay from "~/components/FIleDropOverlay";
 import { useState } from "react";
+import { useServerContext } from "~/context/ServersContext";
+import { useParams } from "react-router-dom";
+import { useNotificationContext } from "~/context/NotificationContext";
 
 const actionButtons = [
     {
@@ -21,6 +24,11 @@ const actionButtons = [
 
 const AppMainPage = () => {
     const { username } = useUserContext();
+    const { servers } = useServerContext();
+    const { sendNotification } = useNotificationContext();
+    const { server_id, bucket_id } = useParams();
+    const current_server = servers?.find((x) => x.id === server_id);
+    const current_bucket = bucket_id || "default";
     const [isOverlayVisible, setOverlayVisible] = useState(false);
 
     const handleDragEnter = () => {
@@ -34,7 +42,24 @@ const AppMainPage = () => {
     const handleFileDrop = async (file: File) => {
         setOverlayVisible(false);
 
-        console.log("now what...?");
+        if (!current_server)
+            return sendNotification(
+                "No current server active to upload",
+                "error"
+            );
+
+        try {
+            sendNotification(`Uploading ...`, "warning");
+            await current_server.uploadFile(
+                current_bucket,
+                file.name,
+                await file.arrayBuffer()
+            );
+            sendNotification(`Successfully uploaded ${file.name}`, "success");
+        } catch (err) {
+            console.error(err);
+            sendNotification(err.toString(), "error");
+        }
     };
 
     return (

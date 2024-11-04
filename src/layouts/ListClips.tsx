@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import Button from "~/components/Button";
 import Loading from "~/components/loading";
 import { useServerContext } from "~/context/ServersContext";
 import { ReactComponent as FolderIcon } from "~/assets/svg/folder.svg";
-import placeholderImage from "~/assets/imgholder.png";
 import FileCard from "~/components/fileCard";
 
 const ListClips = () => {
@@ -18,23 +17,30 @@ const ListClips = () => {
     const [error, setError] = useState<string | undefined>(undefined);
     const current_server = servers?.find((x) => x.id === server_id);
 
+    // Define the fetch function
+    const fetchData = useCallback(async () => {
+        if (!current_server) return;
+        setLoading(true);
+        setError(undefined);
+
+        try {
+            const buckets = await current_server.fetchBuckets();
+            setBuckets(buckets);
+            const files = await current_server.fetchBucketFiles(
+                bucket_id || "default"
+            );
+            setFiles(files);
+            console.log(buckets);
+            console.log(files);
+        } catch (err) {
+            setError(err.toString());
+        } finally {
+            setLoading(false);
+        }
+    }, [current_server, bucket_id]);
+
     useEffect(() => {
-        (async () => {
-            if (!current_server) return;
-            try {
-                const buckets = await current_server.fetchBuckets();
-                setBuckets(buckets);
-                const files = await current_server.fetchBucketFiles(
-                    bucket_id || "default"
-                );
-                setFiles(files);
-                console.log(buckets);
-            } catch (err) {
-                setError(err.toString());
-            } finally {
-                setLoading(false);
-            }
-        })();
+        fetchData();
 
         // Clear
         return () => {
@@ -43,13 +49,15 @@ const ListClips = () => {
             setBuckets(undefined);
             setFiles(undefined);
         };
-    }, [current_server]);
+    }, [fetchData]);
 
     if (error)
         return (
             <div>
                 <div className="flex w-full flex-1 justify-center items-center gap-2 flex-col p-5">
-                    <p className="text-xl font-bold">Couldnt load your files</p>
+                    <p className="text-xl font-bold">
+                        Couldn’t load your files
+                    </p>
                     <p className="max-w-[500px] text-center text-red-400">
                         {error}
                     </p>
@@ -57,7 +65,11 @@ const ListClips = () => {
                         variant="primary"
                         size="md"
                         className="w-[200px] mt-5"
+                        onClick={fetchData} // Retry on button click
                     >
+                        Try again
+                    </Button>
+                    <Button variant="primary" size="md" className="w-[200px]">
                         Update server details
                     </Button>
                     <Button

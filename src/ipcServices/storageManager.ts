@@ -78,4 +78,28 @@ export const storage = {
             });
         });
     },
+
+    uploadFile: async (
+        _event: Electron.IpcMainEvent,
+        id: string,
+        bucket: string,
+        file_name: string,
+        data: any,
+        size?: number,
+        isVideo?: boolean
+    ) => {
+        return new Promise<Error | any>(async (resolve) => {
+            const client = clients.get(id);
+            if (typeof data !== "string")
+                data = Buffer.from(new Uint8Array(data));
+
+            try {
+                await client.putObject(bucket, file_name, data, size);
+
+                if (!isVideo) return resolve(true);
+            } catch (err) {
+                resolve(err);
+            }
+        });
+    },
 };

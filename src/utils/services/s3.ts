@@ -88,4 +88,27 @@ export class Storage {
         if (res instanceof Error) throw res;
         return res;
     }
+
+    async uploadFile(
+        bucket: string,
+        name: string,
+        data: any,
+        size?: number,
+        isVideo?: boolean
+    ) {
+        if (!this.id)
+            throw new Error("Ping the storage without initializing the client");
+
+        const res = await window.api.storage.uploadFile(
+            this.id,
+            bucket,
+            name,
+            data,
+            size,
+            isVideo
+        );
+
+        if (res instanceof Error) throw res;
+        return res;
+    }
 }
