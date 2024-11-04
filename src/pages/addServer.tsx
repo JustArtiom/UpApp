@@ -61,7 +61,6 @@ export default function AddServer() {
             if (!username && name) {
                 name = name.replace(/^./, name[0].toUpperCase());
                 window.api.db.saveUser(name);
-                setUsername(name);
             }
 
             await sclient.saveInDatabase();
@@ -71,12 +70,14 @@ export default function AddServer() {
             // Just so it looks cool
             await new Promise((res) => setTimeout(res, 1000));
 
+            if (!username && name) setUsername(name);
             setIsLoading(false);
             setOpacity(0);
             setTimeout(() => {
                 navigate("/");
             }, 500);
         } catch (err) {
+            console.error(err);
             sendNotification(err.toString(), "error");
             setIsLoading(false);
         }

@@ -45,8 +45,8 @@ export class Storage {
             .saveStorage(this.ip, this.port, this.ssl, this.access, this.secret)
             .catch((err) => err);
 
-        if (res === true) return true;
-        throw res;
+        if (res instanceof Error) throw res;
+        return res;
     }
 
     async initializeDefault() {
