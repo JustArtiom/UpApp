@@ -16,4 +16,7 @@ export const registerIpcEvents = () => {
 
     ipcMain.handle("storage-client-create", storage.createClient);
     ipcMain.handle("storage-ping", storage.ping);
+    ipcMain.handle("storage-fetch-buckets", storage.fetchBuckets);
+    ipcMain.handle("storage-create-bucket", storage.createBucket);
+    ipcMain.handle("storage-fetch-bucket-files", storage.fetchBucketFiles);
 };

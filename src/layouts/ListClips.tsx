@@ -1,10 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Button from "~/components/Button";
 import Loading from "~/components/loading";
+import { useServerContext } from "~/context/ServersContext";
 
 const ListClips = () => {
+    const { servers } = useServerContext();
+    const { server_id, bucket_id } = useParams();
+
+    const [buckets, setBuckets] = useState<undefined>(undefined);
+    const [files, setFiles] = useState<undefined>(undefined);
+
     const [isLoading, setLoading] = useState(true);
-    const [error, setError] = useState("Couldnt load your files... because...");
+    const [error, setError] = useState<string | undefined>(undefined);
+    const current_server = servers?.find((x) => x.id === server_id);
+
+    useEffect(() => {
+        (async () => {
+            if (!current_server) return;
+            try {
+                const buckets = await current_server.fetchBuckets();
+                setBuckets(buckets);
+                const files = await current_server.fetchBucketFiles(
+                    bucket_id || "default"
+                );
+                setFiles(files);
+            } catch (err) {
+                setError(err.toString());
+            } finally {
+                setLoading(false);
+            }
+        })();
+
+        // Clear
+        return () => {
+            setLoading(true);
+            setError(undefined);
+            setBuckets(undefined);
+            setFiles(undefined);
+        };
+    }, [current_server]);
 
     if (error)
         return (
@@ -12,9 +47,7 @@ const ListClips = () => {
                 <div className="flex w-full flex-1 justify-center items-center gap-2 flex-col p-5">
                     <p className="text-xl font-bold">Couldnt load your files</p>
                     <p className="max-w-[500px] text-center text-red-400">
-                        Error: i think something went wrong.. idk i just
-                        think... probably because i have no fucking file to
-                        render
+                        {error}
                     </p>
                     <Button
                         variant="primary"

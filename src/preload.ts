@@ -58,6 +58,18 @@ const api = {
         ping: (id: string) => {
             return ipcRenderer.invoke("storage-ping", id);
         },
+
+        fetchBuckets: (id: string) => {
+            return ipcRenderer.invoke("storage-fetch-buckets", id);
+        },
+
+        createBucket: (id: string, name: string) => {
+            return ipcRenderer.invoke("storage-create-bucket", id, name);
+        },
+
+        fetchBucketFiles: (id: string, bucket: string) => {
+            return ipcRenderer.invoke("storage-fetch-bucket-files", id, bucket);
+        },
     },
 };
 

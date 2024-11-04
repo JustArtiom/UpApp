@@ -62,6 +62,10 @@ export default function Router() {
                         <Route path="/" element={<HandleServerSelection />} />
                         <Route path="/add-server" element={<AddServer />} />
                         <Route path="/:server_id" element={<AppMainPage />} />
+                        <Route
+                            path="/:server_id/:bucket_id"
+                            element={<AppMainPage />}
+                        />
                         <Route path="*" element={<>404 {document.URL}</>} />
                     </Routes>
                 </Booting>

@@ -28,8 +28,9 @@ const AppMainPage = () => {
                     Welcome {username || "Traveler"}
                 </p>
                 <div className="my-10 flex gap-10 flex-wrap">
-                    {actionButtons.map((act) => (
+                    {actionButtons.map((act, i) => (
                         <Button
+                            key={i}
                             className="w-[250px] h-[130px] rounded-xl items-start p-10 py-[30px] flex-col text-gray-500 hover:text-white hover:bg-transparent hover:border-white"
                             variant="primary"
                         >

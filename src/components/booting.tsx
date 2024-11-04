@@ -41,7 +41,7 @@ export default function Booting({ children }: { children: React.ReactNode }) {
                             !!server.ssl
                         );
                         await scleint.createClient();
-                        console.log(scleint.id);
+                        await scleint.initializeDefault();
                         addServer(scleint);
                     }
                 }

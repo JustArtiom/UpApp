@@ -22,7 +22,7 @@ const NavButton = ({
     return (
         <div
             className={cn(
-                "flex items-center rounded-md my-1 mx-2 p-3 px-5 hover:bg-[var(--bg-secondary-hover)] text-white cursor-pointer",
+                "flex items-center rounded-md my-1 mx-2 p-2 px-4 hover:bg-[var(--bg-secondary-hover)] text-white cursor-pointer",
                 className
             )}
             style={{
@@ -63,11 +63,12 @@ const Navigation = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="bg-[var(--bg-secondary)] max-w-[350px] w-[33%] rounded-2xl flex flex-col p-3">
+        <div className="bg-[var(--bg-secondary)] max-w-[320px] w-[30%] rounded-2xl flex flex-col p-2 py-3">
             <NavButton Icon={HouseIcon} title="Home" active={true} />
             <Divisor />
             {servers.map((x) => (
                 <NavButton
+                    key={x.id}
                     title={x.id}
                     Icon={x.id === server_id ? SelectedIcon : undefined}
                     active={x.id === server_id}

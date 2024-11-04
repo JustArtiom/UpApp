@@ -48,4 +48,44 @@ export class Storage {
         if (res === true) return true;
         throw res;
     }
+
+    async initializeDefault() {
+        await this.createBucket("default").catch(() => {});
+    }
+
+    async createBucket(name: string) {
+        if (!this.id)
+            throw new Error("Ping the storage without initializing the client");
+
+        const res = await window.api.storage
+            .createBucket(this.id, name)
+            .catch((err) => err);
+
+        if (res instanceof Error) throw res;
+        return res;
+    }
+
+    async fetchBuckets() {
+        if (!this.id)
+            throw new Error("Ping the storage without initializing the client");
+
+        const res = await window.api.storage
+            .fetchBuckets(this.id)
+            .catch((err) => err);
+
+        if (res instanceof Error) throw res;
+        return res;
+    }
+
+    async fetchBucketFiles(bucket: string) {
+        if (!this.id)
+            throw new Error("Ping the storage without initializing the client");
+
+        const res = await window.api.storage
+            .fetchBucketFiles(this.id, bucket)
+            .catch((err) => err);
+
+        if (res instanceof Error) throw res;
+        return res;
+    }
 }
