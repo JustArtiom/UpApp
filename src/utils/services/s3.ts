@@ -19,6 +19,7 @@ export class Storage {
     access!: string;
     secret!: string;
     ssl!: boolean;
+    static defaultBucket = "cdn";
 
     async createClient() {
         this.id = await window.api.storage.createClient(
@@ -49,10 +50,6 @@ export class Storage {
         return res;
     }
 
-    async initializeDefault() {
-        await this.createBucket("default").catch(() => {});
-    }
-
     async createBucket(name: string) {
         if (!this.id)
             throw new Error("Ping the storage without initializing the client");
@@ -60,6 +57,32 @@ export class Storage {
         const res = await window.api.storage
             .createBucket(this.id, name)
             .catch((err) => err);
+
+        if (res instanceof Error) throw res;
+        return res;
+    }
+
+    async makeBucketPublic(name: string, path: string) {
+        if (!this.id)
+            throw new Error("Ping the storage without initializing the client");
+
+        const bucketPolicy = {
+            Version: "2012-10-17",
+            Statement: [
+                {
+                    Effect: "Allow",
+                    Principal: "*",
+                    Action: ["s3:GetObject"],
+                    Resource: [`arn:aws:s3:::${name}${path}*`],
+                },
+            ],
+        };
+
+        const res = await window.api.storage.updateBucketPolicy(
+            this.id,
+            name,
+            JSON.stringify(bucketPolicy)
+        );
 
         if (res instanceof Error) throw res;
         return res;
@@ -94,7 +117,7 @@ export class Storage {
         name: string,
         data: any,
         size?: number,
-        isVideo?: boolean
+        contentType?: string
     ) {
         if (!this.id)
             throw new Error("Ping the storage without initializing the client");
@@ -105,7 +128,7 @@ export class Storage {
             name,
             data,
             size,
-            isVideo
+            contentType
         );
 
         if (res instanceof Error) throw res;

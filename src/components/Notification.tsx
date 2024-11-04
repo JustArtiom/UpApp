@@ -31,7 +31,7 @@ const Notification = ({
 
     return (
         <div
-            className={`relative bg-[var(--bg-primary)] rounded-xl border-[1px] p-3 pr-5 w-[300px] m-5 hover:scale-[101%] transition-all duration-300 cursor-pointer ${
+            className={`relative bg-[var(--bg-primary)] rounded-xl border-[1px] p-3 w-[300px] m-5 hover:scale-[101%] transition-all duration-300 cursor-pointer pr-[40px] ${
                 newNotif
                     ? "animate-notification-new"
                     : "animate-notification-old"

@@ -56,6 +56,19 @@ export const storage = {
         }
     },
 
+    updateBucketPolicy: async (
+        _event: Electron.IpcMainEvent,
+        id: string,
+        name: string,
+        policy: any
+    ) => {
+        try {
+            return await clients.get(id).setBucketPolicy(name, policy);
+        } catch (err) {
+            return err;
+        }
+    },
+
     fetchBucketFiles: async (
         _event: Electron.IpcMainEvent,
         id: string,
@@ -86,7 +99,7 @@ export const storage = {
         file_name: string,
         data: any,
         size?: number,
-        isVideo?: boolean
+        contentType?: string
     ) => {
         return new Promise<Error | any>(async (resolve) => {
             const client = clients.get(id);
@@ -94,9 +107,18 @@ export const storage = {
                 data = Buffer.from(new Uint8Array(data));
 
             try {
-                await client.putObject(bucket, file_name, data, size);
-
-                if (!isVideo) return resolve(true);
+                await client.putObject(
+                    bucket,
+                    file_name,
+                    data,
+                    size,
+                    contentType
+                        ? {
+                              "Content-Type": contentType,
+                          }
+                        : undefined
+                );
+                resolve(true);
             } catch (err) {
                 resolve(err);
             }

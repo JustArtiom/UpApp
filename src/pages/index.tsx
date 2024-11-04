@@ -10,6 +10,8 @@ import { useState } from "react";
 import { useServerContext } from "~/context/ServersContext";
 import { useParams } from "react-router-dom";
 import { useNotificationContext } from "~/context/NotificationContext";
+import { ReactComponent as ReloadIcon } from "~/assets/svg/reload.svg";
+import { Storage } from "~/utils/services/s3";
 
 const actionButtons = [
     {
@@ -28,8 +30,13 @@ const AppMainPage = () => {
     const { sendNotification } = useNotificationContext();
     const { server_id, bucket_id } = useParams();
     const current_server = servers?.find((x) => x.id === server_id);
-    const current_bucket = bucket_id || "default";
+    const current_bucket = bucket_id || Storage.defaultBucket;
     const [isOverlayVisible, setOverlayVisible] = useState(false);
+    const [reloadKey, setReloadKey] = useState(0);
+
+    const handleReload = () => {
+        setReloadKey((prev) => prev + 1);
+    };
 
     const handleDragEnter = () => {
         setOverlayVisible(true);
@@ -53,9 +60,12 @@ const AppMainPage = () => {
             await current_server.uploadFile(
                 current_bucket,
                 file.name,
-                await file.arrayBuffer()
+                await file.arrayBuffer(),
+                undefined,
+                file.type
             );
             sendNotification(`Successfully uploaded ${file.name}`, "success");
+            handleReload();
         } catch (err) {
             console.error(err);
             sendNotification(err.toString(), "error");
@@ -86,10 +96,33 @@ const AppMainPage = () => {
                     ))}
                 </div>
                 <p className="my-5 text-xl font-bold">All files</p>
-                <div className="flex my-5">
+                <div className="flex my-5 gap-2 ">
                     <SearchBar />
+                    <Button
+                        className="px-2 rounded-md"
+                        onClick={(e) => {
+                            const button = e.currentTarget;
+
+                            if (button) {
+                                button.style.animation =
+                                    "spin360 0.2s ease forwards";
+
+                                button.addEventListener(
+                                    "animationend",
+                                    () => {
+                                        if (button) button.style.animation = "";
+                                    },
+                                    { once: true }
+                                );
+                            }
+
+                            handleReload();
+                        }}
+                    >
+                        <ReloadIcon className="w-[20px]" />
+                    </Button>
                 </div>
-                <ListClips />
+                <ListClips key={reloadKey} />
             </div>
             <FileDropOverlay
                 onDragLeave={handleDragLeave}

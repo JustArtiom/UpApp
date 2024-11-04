@@ -4,14 +4,16 @@ import Button from "~/components/Button";
 import Loading from "~/components/loading";
 import { useServerContext } from "~/context/ServersContext";
 import { ReactComponent as FolderIcon } from "~/assets/svg/folder.svg";
+import { ReactComponent as FileIcon } from "~/assets/svg/file.svg";
 import FileCard from "~/components/fileCard";
+import { Storage } from "~/utils/services/s3";
 
 const ListClips = () => {
     const { servers } = useServerContext();
     const { server_id, bucket_id } = useParams();
 
     const [buckets, setBuckets] = useState<any[]>(undefined);
-    const [files, setFiles] = useState<undefined>(undefined);
+    const [files, setFiles] = useState<any[]>(undefined);
 
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<string | undefined>(undefined);
@@ -27,7 +29,7 @@ const ListClips = () => {
             const buckets = await current_server.fetchBuckets();
             setBuckets(buckets);
             const files = await current_server.fetchBucketFiles(
-                bucket_id || "default"
+                bucket_id || Storage.defaultBucket
             );
             setFiles(files);
             console.log(buckets);
@@ -56,7 +58,7 @@ const ListClips = () => {
             <div>
                 <div className="flex w-full flex-1 justify-center items-center gap-2 flex-col p-5">
                     <p className="text-xl font-bold">
-                        Couldn’t load your files
+                        Couldn't load your files
                     </p>
                     <p className="max-w-[500px] text-center text-red-400">
                         {error}
@@ -95,7 +97,7 @@ const ListClips = () => {
     return (
         <div className="flex gap-3 flex-wrap">
             {buckets
-                .filter((x) => x.name != "default")
+                .filter((x) => x.name != Storage.defaultBucket)
                 .map((bucket, i) => (
                     <FileCard
                         key={i}
@@ -107,6 +109,20 @@ const ListClips = () => {
                         variant="block"
                     />
                 ))}
+            {files.map((file, i) => (
+                <FileCard
+                    key={i}
+                    name={file.name}
+                    date={file.lastModified}
+                    bgImage={`https://i.artiom.me/cdn/.banner-${encodeURI(
+                        file.name
+                    )}.png`}
+                    overlay={{
+                        Icon: FileIcon,
+                    }}
+                    variant="block"
+                />
+            ))}
         </div>
     );
 };

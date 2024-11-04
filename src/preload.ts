@@ -69,6 +69,15 @@ const api = {
             return ipcRenderer.invoke("storage-create-bucket", id, name);
         },
 
+        updateBucketPolicy: (id: string, name: string, policy: any) => {
+            return ipcRenderer.invoke(
+                "storage-bucket-policy-update",
+                id,
+                name,
+                policy
+            );
+        },
+
         fetchBucketFiles: (id: string, bucket: string) => {
             return ipcRenderer.invoke("storage-fetch-bucket-files", id, bucket);
         },
@@ -79,7 +88,7 @@ const api = {
             file_name: string,
             data: any,
             size?: number,
-            isVideo?: boolean
+            contentType?: string
         ) => {
             return ipcRenderer.invoke(
                 "storage-file-upload",
@@ -88,7 +97,7 @@ const api = {
                 file_name,
                 data,
                 size,
-                isVideo
+                contentType
             );
         },
     },

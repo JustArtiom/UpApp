@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS storages (
     ssl BOOLEAN NOT NULL,
     public TEXT NOT NULL,
     secret TEXT NOT NULL,
+    alias VARCHAR(255),
     UNIQUE(ip, port)
 );
 
@@ -100,13 +101,14 @@ export const database = {
         port: number,
         ssl: boolean,
         access: string,
-        secret: string
+        secret: string,
+        alias?: string
     ) => {
         return await database
             .queryDatabase<"run">(
                 undefined,
-                "INSERT INTO storages (ip, port, ssl, public, secret) VALUES (?,?,?,?,?) ON CONFLICT(ip, port) DO UPDATE SET ssl = EXCLUDED.ssl, public = EXCLUDED.public, secret = EXCLUDED.secret;",
-                [ip, port, ssl ? 1 : 0, access, secret]
+                "INSERT INTO storages (ip, port, ssl, public, secret, alias) VALUES (?,?,?,?,?,?) ON CONFLICT(ip, port) DO UPDATE SET ssl = EXCLUDED.ssl, public = EXCLUDED.public, secret = EXCLUDED.secret; alias = EXCLUDED.alias",
+                [ip, port, ssl ? 1 : 0, access, secret, alias || null]
             )
             .catch((err) => err);
     },

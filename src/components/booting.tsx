@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "~/components/loading";
+import { useNotificationContext } from "~/context/NotificationContext";
 import { useServerContext } from "~/context/ServersContext";
 import { useUserContext } from "~/context/UserContext";
 import { Storage } from "~/utils/services/s3";
@@ -11,6 +12,7 @@ export default function Booting({ children }: { children: React.ReactNode }) {
     const [error, setError] = useState<string | null>(null);
     const transitionTime = useMemo<number>(() => 500, []);
     const navigate = useNavigate();
+    const { sendNotification } = useNotificationContext();
     const { servers: serversCtx, addServer } = useServerContext();
     const { setUsername } = useUserContext();
 
@@ -46,7 +48,33 @@ export default function Booting({ children }: { children: React.ReactNode }) {
                         );
                         await scleint.createClient();
                         if (await scleint.ping().catch(() => false)) {
-                            await scleint.initializeDefault();
+                            const buckets = await scleint.fetchBuckets();
+                            if (
+                                !buckets.find(
+                                    (b: any) => b.name === Storage.defaultBucket
+                                )
+                            )
+                                await scleint
+                                    .createBucket(Storage.defaultBucket)
+                                    .catch((err) => {
+                                        sendNotification(
+                                            `Error creating ${Storage.defaultBucket} at ${scleint.id}. ${err}`,
+                                            "error"
+                                        );
+                                    });
+                            await scleint
+                                .makeBucketPublic(Storage.defaultBucket, "/")
+                                .catch((err) => {
+                                    sendNotification(
+                                        `Error updating ${scleint.id} policy. ${err}`,
+                                        "error"
+                                    );
+                                });
+                        } else {
+                            sendNotification(
+                                `${scleint.id} might be offline...`,
+                                "error"
+                            );
                         }
                         addServer(scleint);
                     }
