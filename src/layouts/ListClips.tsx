@@ -28,7 +28,6 @@ const ListClips = () => {
             } catch (err) {
                 setError(err.toString());
             } finally {
-                setLoading(false);
             }
         })();
 
