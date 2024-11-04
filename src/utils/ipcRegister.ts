@@ -8,7 +8,7 @@ export const registerIpcEvents = () => {
 
     ipcMain.handle("database-setpath", database.setdbPath);
     ipcMain.handle("database-initialize", database.initializeDatabase);
-    ipcMain.handle("db-query", database.execQuery);
+    ipcMain.handle("db-query", database.queryDatabase);
     ipcMain.handle("db-get-servers", database.getServers);
     ipcMain.handle("db-get-user", database.getUser);
     ipcMain.handle("db-save-user", database.saveUser);
