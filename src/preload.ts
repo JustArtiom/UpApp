@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
+import { throwOrReturn } from "./utils";
 
 const api = {
     window: {
@@ -9,8 +10,9 @@ const api = {
 
     db: {
         setdbPath: (dbPath: string) =>
-            ipcRenderer.invoke("database-setpath", dbPath),
-        initialize: () => ipcRenderer.invoke("database-initialize"),
+            ipcRenderer.invoke("database-setpath", dbPath).then(throwOrReturn),
+        initialize: () =>
+            ipcRenderer.invoke("database-initialize").then(throwOrReturn),
         query: (
             query: string,
             values: Array<string | number | null | Buffer>

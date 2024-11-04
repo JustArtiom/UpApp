@@ -17,10 +17,14 @@ export default function Booting({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         async function doStuff() {
             try {
-                await window.api.db.setdbPath("./.db");
+                console.log("Start booting");
+                console.log(await window.api.db.setdbPath(".db"));
+                console.log("Database path set");
                 await window.api.db.initialize();
+                console.log("Database initialized");
                 const servers = await window.api.db.getServers();
                 const username = await window.api.db.getUser();
+                console.log("Database fetch completed");
 
                 if (username) {
                     setUsername(username.name);
@@ -41,21 +45,24 @@ export default function Booting({ children }: { children: React.ReactNode }) {
                             !!server.ssl
                         );
                         await scleint.createClient();
-                        await scleint.initializeDefault();
+                        if (await scleint.ping()) {
+                            await scleint.initializeDefault();
+                        }
                         addServer(scleint);
                     }
                 }
 
+                console.log("Finished Booting");
                 setOpacity(0);
-                setTimeout(async () => {
-                    if (servers.length <= 0) {
+                if (servers.length <= 0) {
+                    setTimeout(async () => {
                         navigate("/add-server");
                         setRender(true);
-                        return;
-                    }
-                }, transitionTime);
+                    }, transitionTime);
+                }
             } catch (err) {
                 setError(err.toString());
+                console.error(err);
             }
         }
 

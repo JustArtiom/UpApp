@@ -1,4 +1,7 @@
+import { app } from "electron";
 import * as sqlite from "sqlite-electron";
+import path from "path";
+import fs from "fs";
 
 const sqltables = `
 CREATE TABLE IF NOT EXISTS user (
@@ -44,11 +47,22 @@ CREATE TABLE IF NOT EXISTS labeled_videos (
 
 export const database = {
     setdbPath: async (_event: Electron.IpcMainEvent, dbPath: string) => {
-        return await sqlite.setdbPath(dbPath);
+        const fullPath = path.join(app.getPath("userData"), "./database.db");
+        console.log("Requested database path:", fullPath);
+        return await sqlite
+            .setdbPath(fullPath)
+            .then((d) => {
+                console.log("Database path set response:", d);
+                return d;
+            })
+            .catch((e) => {
+                console.error("Error setting database path:", e);
+                return e;
+            });
     },
 
     initializeDatabase: async (_event: Electron.IpcMainEvent) => {
-        return await sqlite.executeScript(sqltables);
+        return await sqlite.executeScript(sqltables).catch((e) => e);
     },
 
     execQuery: async (

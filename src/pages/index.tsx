@@ -5,6 +5,8 @@ import { ReactComponent as FolderCreateIcon } from "~/assets/svg/create-folder.s
 import Navigation from "~/layouts/Navigation";
 import SearchBar from "~/components/search";
 import ListClips from "~/layouts/ListClips";
+import FileDropOverlay from "~/components/FIleDropOverlay";
+import { useState } from "react";
 
 const actionButtons = [
     {
@@ -19,9 +21,27 @@ const actionButtons = [
 
 const AppMainPage = () => {
     const { username } = useUserContext();
+    const [isOverlayVisible, setOverlayVisible] = useState(false);
+
+    const handleDragEnter = () => {
+        setOverlayVisible(true);
+    };
+
+    const handleDragLeave = () => {
+        setOverlayVisible(false);
+    };
+
+    const handleFileDrop = async (file: File) => {
+        setOverlayVisible(false);
+
+        console.log("now what...?");
+    };
 
     return (
-        <div className="w-full h-full flex p-4 gap-4">
+        <div
+            className="w-full h-full flex p-4 gap-4 relative"
+            onDragEnter={handleDragEnter}
+        >
             <Navigation />
             <div className="flex flex-col min-h-full w-full p-10 overflow-y-auto">
                 <p className="mb-5 text-2xl font-bold">
@@ -46,6 +66,11 @@ const AppMainPage = () => {
                 </div>
                 <ListClips />
             </div>
+            <FileDropOverlay
+                onDragLeave={handleDragLeave}
+                onFileDrop={handleFileDrop}
+                isVisible={isOverlayVisible}
+            />
         </div>
     );
 };

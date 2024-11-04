@@ -3,12 +3,15 @@ import { useParams } from "react-router-dom";
 import Button from "~/components/Button";
 import Loading from "~/components/loading";
 import { useServerContext } from "~/context/ServersContext";
+import { ReactComponent as FolderIcon } from "~/assets/svg/folder.svg";
+import placeholderImage from "~/assets/imgholder.png";
+import FileCard from "~/components/fileCard";
 
 const ListClips = () => {
     const { servers } = useServerContext();
     const { server_id, bucket_id } = useParams();
 
-    const [buckets, setBuckets] = useState<undefined>(undefined);
+    const [buckets, setBuckets] = useState<any[]>(undefined);
     const [files, setFiles] = useState<undefined>(undefined);
 
     const [isLoading, setLoading] = useState(true);
@@ -25,9 +28,11 @@ const ListClips = () => {
                     bucket_id || "default"
                 );
                 setFiles(files);
+                console.log(buckets);
             } catch (err) {
                 setError(err.toString());
             } finally {
+                setLoading(false);
             }
         })();
 
@@ -75,7 +80,23 @@ const ListClips = () => {
             </div>
         );
 
-    return <div>Hello</div>;
+    return (
+        <div className="flex gap-3 flex-wrap">
+            {buckets
+                .filter((x) => x.name != "default")
+                .map((bucket, i) => (
+                    <FileCard
+                        key={i}
+                        name={bucket.name}
+                        date={bucket.creationDate}
+                        overlay={{
+                            Icon: FolderIcon,
+                        }}
+                        variant="block"
+                    />
+                ))}
+        </div>
+    );
 };
 
 export default ListClips;
