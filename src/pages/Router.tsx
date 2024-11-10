@@ -9,6 +9,7 @@ import AppMainPage from ".";
 import { useServerContext } from "~/context/ServersContext";
 import { useEffect } from "react";
 import PageNotFound from "~/layouts/NotFound";
+import FilePreview from "./filePreview";
 
 function ErrorFallback({ error }: { error: any }) {
     return (
@@ -66,6 +67,10 @@ export default function Router() {
                         <Route
                             path="/:server_id/:bucket_id"
                             element={<AppMainPage />}
+                        />
+                        <Route
+                            path="/:server_id/:bucket_id/:file_id"
+                            element={<FilePreview />}
                         />
                         <Route path="*" element={<PageNotFound />} />
                     </Routes>

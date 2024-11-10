@@ -17,6 +17,7 @@ export class Storage {
             ?.replace("https://", "")
             .replace("http://", "")
             .replace("/", "");
+        this.fullUrl = `http${ssl ? "s" : ""}://${ip}:${port}`;
     }
 
     id?: string;
@@ -27,6 +28,7 @@ export class Storage {
     ssl!: boolean;
     alias?: string;
     alias_domain?: string;
+    fullUrl: string;
     static defaultBucket = "cdn";
 
     async createClient() {

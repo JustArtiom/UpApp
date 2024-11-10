@@ -74,7 +74,18 @@ const AppMainPage = () => {
                 file.type
             );
 
-            sendNotification(`Successfully uploaded ${file.name}`, "success");
+            navigator.clipboard
+                .writeText(
+                    `${
+                        current_server.alias || current_server.fullUrl
+                    }/${current_bucket}/${file.name}`
+                )
+                .catch(() => {});
+
+            sendNotification(
+                `Successfully uploaded ${file.name} and copied the url to clipboard`,
+                "success"
+            );
         } catch (err) {
             console.error(err);
             sendNotification(err.toString(), "error");
