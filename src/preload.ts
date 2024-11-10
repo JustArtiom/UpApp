@@ -106,6 +106,9 @@ const api = {
                 contentType
             );
         },
+
+        deleteFile: (id: string, bucket: string, file_name: string) =>
+            ipcRenderer.invoke("storage-file-delete", id, bucket, file_name),
     },
 
     ffmpeg: {

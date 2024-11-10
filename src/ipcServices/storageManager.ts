@@ -1,5 +1,6 @@
 import * as Minio from "minio";
 import { BucketItem } from "minio";
+import { ffmpeg } from "./ffmpegManager";
 
 const clients: Map<string, Minio.Client> = new Map();
 
@@ -119,10 +120,49 @@ export const storage = {
                           }
                         : undefined
                 );
-                resolve(true);
+                if (!contentType.includes("video")) resolve(true);
+                try {
+                    const fpath = ffmpeg.createThumbnail(
+                        undefined,
+                        file_name,
+                        data
+                    );
+
+                    if (fpath) {
+                        await client.putObject(
+                            bucket,
+                            fpath.thumbnailFileName,
+                            fpath.thumbnailStream,
+                            size,
+                            {
+                                "Content-Type": "image/jpeg",
+                            }
+                        );
+                        fpath.deleteThubnail();
+                    }
+                } catch (err) {
+                    console.log(err);
+                } finally {
+                    resolve(true);
+                }
             } catch (err) {
                 resolve(err);
             }
         });
+    },
+
+    deleteFile: async (
+        _event: Electron.IpcMainEvent,
+        id: string,
+        bucket: string,
+        file_name: string
+    ) => {
+        try {
+            const client = clients.get(id);
+            await client.removeObject(bucket, file_name);
+            return true;
+        } catch (err) {
+            return err;
+        }
     },
 };

@@ -16,6 +16,7 @@ const AddServerForm = ({
 
     const [notiflen, setNotiflen] = useState(0);
     const [iperr, setIperr] = useState(false);
+    const [aliaserr, setAliaserr] = useState(false);
     const [unameerr, setUnameerr] = useState(false);
     const [passerr, setPasserr] = useState(false);
     const [sslerr, setSslerr] = useState(false);
@@ -29,6 +30,10 @@ const AddServerForm = ({
             return;
         }
         setNotiflen(notifications.length);
+
+        if (errors.find((x) => x.includes("Invalid alias"))) {
+            setAliaserr(true);
+        }
 
         if (
             errors.find((x) => x.includes("getaddrinfo ENOTFOUND")) ||
@@ -113,6 +118,23 @@ const AddServerForm = ({
                     required
                 />
             </div>
+            <Input
+                id={"alias"}
+                name={"alias"}
+                labelTitle={
+                    <p className="text-lg p-2 pt-3">
+                        IP Alias{" "}
+                        <span className="text-gray-600 font-normal text-sm">
+                            (optional)
+                        </span>
+                    </p>
+                }
+                variant="transparent"
+                border="primary"
+                placeholder="https://i.domain.com"
+                className={aliaserr ? "border-red-500 shake-error" : ""}
+                onChange={() => setAliaserr(false)}
+            />
             <Input
                 id={"username"}
                 name={"username"}

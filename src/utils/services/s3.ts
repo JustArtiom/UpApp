@@ -13,6 +13,10 @@ export class Storage {
         this.secret = secret;
         this.ssl = !!ssl;
         this.alias = alias;
+        this.alias_domain = alias
+            ?.replace("https://", "")
+            .replace("http://", "")
+            .replace("/", "");
     }
 
     id?: string;
@@ -22,6 +26,7 @@ export class Storage {
     secret!: string;
     ssl!: boolean;
     alias?: string;
+    alias_domain?: string;
     static defaultBucket = "cdn";
 
     async createClient() {
@@ -140,6 +145,16 @@ export class Storage {
             size,
             contentType
         );
+
+        if (res instanceof Error) throw res;
+        return res;
+    }
+
+    async fileDelete(bucket: string, fname: string) {
+        if (!this.id)
+            throw new Error("Ping the storage without initializing the client");
+
+        const res = await window.api.storage.deleteFile(this.id, bucket, fname);
 
         if (res instanceof Error) throw res;
         return res;

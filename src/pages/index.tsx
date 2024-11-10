@@ -154,6 +154,7 @@ const AppMainPage = () => {
                     key={reloadKey}
                     variant={displayType}
                     filter={searchValue}
+                    handleReload={handleReload}
                 />
             </div>
             <FileDropOverlay

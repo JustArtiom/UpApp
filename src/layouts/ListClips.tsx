@@ -7,20 +7,29 @@ import { ReactComponent as FolderIcon } from "~/assets/svg/folder.svg";
 import { ReactComponent as FileIcon } from "~/assets/svg/file.svg";
 import FileCard from "~/components/fileCard";
 import { Storage } from "~/utils/services/s3";
+import { useNotificationContext } from "~/context/NotificationContext";
+import Modal from "~/components/modal";
 
 const ListClips = ({
     variant,
     filter,
+    handleReload,
 }: {
     variant: "row" | "block";
     filter?: string;
+    handleReload: Function;
 }) => {
     const { servers } = useServerContext();
     const { server_id, bucket_id } = useParams();
+    const { sendNotification } = useNotificationContext();
     const navigate = useNavigate();
 
     const [buckets, setBuckets] = useState<any[]>(undefined);
     const [files, setFiles] = useState<any[]>(undefined);
+    const [deleteFile, setDeleteFile] = useState<null | {
+        fname: string;
+        aproved?: boolean;
+    }>(null);
 
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<string | undefined>(undefined);
@@ -59,6 +68,34 @@ const ListClips = ({
             setFiles(undefined);
         };
     }, [fetchData]);
+
+    useEffect(() => {
+        if (deleteFile && deleteFile.aproved)
+            current_server
+                .fileDelete(current_bucket, deleteFile.fname)
+                .then(() => {
+                    setFiles(null);
+                    handleReload();
+                    sendNotification("File deleted successfully", "success");
+                })
+                .catch((err) =>
+                    sendNotification("Error Deleting file. " + err, "error")
+                );
+    }, [deleteFile]);
+
+    const handleCopy = (text: string) => {
+        navigator.clipboard
+            .writeText(text)
+            .then(() => {
+                sendNotification(
+                    "Successfully coppied to clipboard",
+                    "success"
+                );
+            })
+            .catch(() => {
+                sendNotification("Error coppying to clipboard", "error");
+            });
+    };
 
     if (error)
         return (
@@ -103,6 +140,35 @@ const ListClips = ({
 
     return (
         <div className="flex flex-wrap">
+            {deleteFile && !deleteFile.aproved ? (
+                <Modal>
+                    <p className="text-center text-lg font-bold">
+                        Are you sure you want to delete
+                    </p>
+                    <p className="text-center mb-4">{deleteFile.fname}</p>
+                    <div className="flex justify-around">
+                        <Button
+                            variant="primary"
+                            size="md"
+                            onHover="danger"
+                            onClick={() => {
+                                setDeleteFile((x) => ({ ...x, aproved: true }));
+                            }}
+                        >
+                            Yes, delete it
+                        </Button>
+                        <Button
+                            variant="primary"
+                            size="md"
+                            onClick={() => setDeleteFile(null)}
+                        >
+                            No, dont delete
+                        </Button>
+                    </div>
+                </Modal>
+            ) : (
+                ""
+            )}
             {isDefault ? (
                 buckets
                     .filter((x) => x.name != Storage.defaultBucket)
@@ -125,6 +191,16 @@ const ListClips = ({
                                     `/${current_server.id}/${bucket.name}`
                                 );
                             }}
+                            allowEdit
+                            onEdit={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }}
+                            allowDelete
+                            onDelete={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }}
                         />
                     ))
             ) : (
@@ -143,15 +219,28 @@ const ListClips = ({
                 .filter((x) =>
                     x.name?.toLowerCase().includes(filter?.toLowerCase() || "")
                 )
+                .filter((x) => !x.name.startsWith(".thub"))
                 .map((file, i) => (
                     <FileCard
                         key={i}
                         name={file.name}
                         date={file.lastModified}
                         size={file.size}
-                        bgImage={`https://i.artiom.me/cdn/.banner-${encodeURI(
-                            file.name
-                        )}.png`}
+                        bgImage={
+                            file.name.endsWith("mp4")
+                                ? `${current_server.ssl ? "https" : "http"}://${
+                                      current_server.id
+                                  }/${current_bucket}/.thub_${encodeURI(
+                                      file.name
+                                  )}.jpg`
+                                : ["jpg", "jpeg", "png"].find((x) =>
+                                      file.name.endsWith(x)
+                                  )
+                                ? `${current_server.ssl ? "https" : "http"}://${
+                                      current_server.id
+                                  }/${current_bucket}/${encodeURI(file.name)}`
+                                : ""
+                        }
                         overlay={{
                             Icon: FileIcon,
                         }}
@@ -162,6 +251,30 @@ const ListClips = ({
                                     current_server.id
                                 }/${current_bucket}/${encodeURI(file.name)}`
                             );
+                        }}
+                        allowLink
+                        onLink={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleCopy(
+                                (current_server.alias ||
+                                    `${
+                                        current_server.ssl ? "https" : "http"
+                                    }://${current_server.id}`) +
+                                    `/${current_bucket}/${encodeURI(file.name)}`
+                            );
+                        }}
+                        allowEdit
+                        onEdit={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }}
+                        allowDelete
+                        onDelete={async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            setDeleteFile({ fname: file.name });
                         }}
                     />
                 ))}

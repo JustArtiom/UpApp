@@ -31,12 +31,12 @@ export default function Booting({ children }: { children: React.ReactNode }) {
                 const user = await window.api.db.getUser();
                 console.log("Database fetch completed");
 
-                console.log(user);
-
                 if (ffmpegQ === null || ffmpegQ === true) {
                     const installedFfmpeg =
                         await window.api.ffmpeg.isInstalled();
-                    const dismissQuestion = user.dismiss_ffmpeg_warning;
+                    const dismissQuestion = user
+                        ? user.dismiss_ffmpeg_warning
+                        : true;
 
                     if (installedFfmpeg || dismissQuestion)
                         return setFfmpegQ(false);
@@ -60,7 +60,8 @@ export default function Booting({ children }: { children: React.ReactNode }) {
                             server.port,
                             server.public,
                             server.secret,
-                            !!server.ssl
+                            !!server.ssl,
+                            server.alias
                         );
                         await scleint.createClient();
                         if (await scleint.ping().catch(() => false)) {
@@ -133,7 +134,7 @@ export default function Booting({ children }: { children: React.ReactNode }) {
         >
             {ffmpegQ ? (
                 <Modal>
-                    <div className="max-w-[400px] w-full m-5 p-5 bg-[var(--bg-primary)] rounded-xl border-[var(--stroke-primary)] border-[1px]">
+                    <>
                         <p className="text-center mb-2">
                             For a better experience install ffmpeg and set it in
                             your path environment variables
@@ -159,7 +160,7 @@ export default function Booting({ children }: { children: React.ReactNode }) {
                                 Dont show again
                             </Button>
                         </div>
-                    </div>
+                    </>
                 </Modal>
             ) : (
                 ""

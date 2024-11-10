@@ -43,6 +43,7 @@ export default function AddServer() {
         let name = formData.get("yourName") as string | undefined;
         const ip = formData.get("serverIp")?.toString().toLowerCase() as string;
         const port = formData.get("serverPort") as string;
+        const alias = formData.get("alias") as string;
         const uname = formData.get("username") as string;
         const password = formData.get("password") as string;
         const ssl = formData.get("ssl") as null | "on";
@@ -53,8 +54,21 @@ export default function AddServer() {
                 Number(port),
                 uname,
                 password,
-                !!ssl
+                !!ssl,
+                alias
             );
+
+            if (alias) {
+                if (
+                    !alias.startsWith("http://") &&
+                    !alias.startsWith("https://")
+                ) {
+                    throw new Error(
+                        "Invalid alias. Please provide an alias starting with http or https"
+                    );
+                }
+            }
+
             await sclient.createClient();
             await sclient.ping();
 
@@ -66,6 +80,25 @@ export default function AddServer() {
             await sclient.saveInDatabase();
 
             addServer(sclient);
+
+            const buckets = await sclient.fetchBuckets();
+            if (!buckets.find((b: any) => b.name === Storage.defaultBucket))
+                await sclient
+                    .createBucket(Storage.defaultBucket)
+                    .catch((err) => {
+                        sendNotification(
+                            `Error creating ${Storage.defaultBucket} at ${sclient.id}. ${err}`,
+                            "error"
+                        );
+                    });
+            await sclient
+                .makeBucketPublic(Storage.defaultBucket, "/")
+                .catch((err) => {
+                    sendNotification(
+                        `Error updating ${sclient.id} policy. ${err}`,
+                        "error"
+                    );
+                });
 
             // Just so it looks cool
             await new Promise((res) => setTimeout(res, 1000));

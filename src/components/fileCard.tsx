@@ -2,7 +2,9 @@ import { formatDateTime } from "~/utils/date";
 import { formatFileSize } from "~/utils/mem";
 import { ReactComponent as EditIcon } from "~/assets/svg/edit.svg";
 import { ReactComponent as DeleteIcon } from "~/assets/svg/delete.svg";
+import { ReactComponent as LinkIcon } from "~/assets/svg/link.svg";
 import Button from "./Button";
+import { useEffect, useState } from "react";
 
 interface FileCardProps {
     variant?: "block" | "row";
@@ -14,7 +16,13 @@ interface FileCardProps {
     size?: number;
     name: string;
     date?: Date;
+    allowLink?: boolean;
+    allowEdit?: boolean;
+    allowDelete?: boolean;
     onClick?: React.MouseEventHandler<HTMLDivElement>;
+    onLink?: React.MouseEventHandler<HTMLButtonElement>;
+    onEdit?: React.MouseEventHandler<HTMLButtonElement>;
+    onDelete?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 const width = 300;
@@ -27,9 +35,25 @@ const FileCard: React.FC<FileCardProps> = ({
     size,
     name,
     date,
+    allowLink,
+    allowEdit,
+    allowDelete,
     onClick,
+    onLink,
+    onEdit,
+    onDelete,
 }) => {
     const { date: curdate, time, period } = formatDateTime(date || new Date());
+    const [imageLoaded, setImageLoaded] = useState(false);
+
+    useEffect(() => {
+        if (bgImage) {
+            const img = new Image();
+            img.src = bgImage;
+            img.onload = () => setImageLoaded(true);
+            img.onerror = () => setImageLoaded(false);
+        }
+    }, [bgImage]);
 
     if (variant == "block")
         return (
@@ -49,7 +73,7 @@ const FileCard: React.FC<FileCardProps> = ({
                         backgroundPosition: "center",
                     }}
                 >
-                    {overlay ? (
+                    {!imageLoaded && overlay ? (
                         <>
                             <overlay.Icon className="w-[40px]" />
                             <p>{overlay.title}</p>
@@ -77,6 +101,7 @@ const FileCard: React.FC<FileCardProps> = ({
                 className="w-full flex min-h-[40px] py-1 items-center px-5 hover:bg-[var(--bg-secondary)] cursor-pointer group"
             >
                 <div
+                    className={`w-[20px] h-[20px] mr-3`}
                     style={{
                         backgroundImage: bgImage
                             ? `url(${bgImage})`
@@ -85,7 +110,7 @@ const FileCard: React.FC<FileCardProps> = ({
                         backgroundPosition: "center",
                     }}
                 >
-                    {overlay ? (
+                    {!imageLoaded && overlay ? (
                         <>
                             <overlay.Icon className="w-[20px] mr-3" />
                             <p>{overlay.title}</p>
@@ -106,24 +131,36 @@ const FileCard: React.FC<FileCardProps> = ({
                     {curdate} | {time} {period}
                 </p>
                 <div className="hidden group-hover:flex gap-2">
-                    <Button
-                        className="p-1  text-gray-500 hover:text-white"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }}
-                    >
-                        <EditIcon className="w-[18px]" />
-                    </Button>
-                    <Button
-                        className="p-1  text-gray-500 hover:text-red-500"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }}
-                    >
-                        <DeleteIcon className="w-[18px]" />
-                    </Button>
+                    {allowLink ? (
+                        <Button
+                            onClick={onLink}
+                            className="p-1 text-gray-500 hover:text-white"
+                        >
+                            <LinkIcon className="w-[18px]" />
+                        </Button>
+                    ) : (
+                        ""
+                    )}
+                    {allowEdit ? (
+                        <Button
+                            className="p-1 text-gray-500 hover:text-white"
+                            onClick={onEdit}
+                        >
+                            <EditIcon className="w-[18px]" />
+                        </Button>
+                    ) : (
+                        ""
+                    )}
+                    {allowDelete ? (
+                        <Button
+                            className="p-1  text-gray-500 hover:text-red-500"
+                            onClick={onDelete}
+                        >
+                            <DeleteIcon className="w-[18px]" />
+                        </Button>
+                    ) : (
+                        ""
+                    )}
                 </div>
             </div>
         );

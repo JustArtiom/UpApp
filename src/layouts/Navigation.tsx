@@ -70,7 +70,7 @@ const Navigation = () => {
             {servers.map((x) => (
                 <NavButton
                     key={x.id}
-                    title={x.id}
+                    title={x.alias_domain || x.id}
                     Icon={x.id === server_id ? SelectedIcon : undefined}
                     active={x.id === server_id}
                     onClick={() => {

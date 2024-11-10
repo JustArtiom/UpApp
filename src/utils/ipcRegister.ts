@@ -22,6 +22,7 @@ export const registerIpcEvents = () => {
     ipcMain.handle("storage-fetch-bucket-files", storage.fetchBucketFiles);
     ipcMain.handle("storage-bucket-policy-update", storage.updateBucketPolicy);
     ipcMain.handle("storage-file-upload", storage.uploadFile);
+    ipcMain.handle("storage-file-delete", storage.deleteFile);
 
     ipcMain.handle("ffmpeg-is-installed", ffmpeg.isInstalled);
 };
