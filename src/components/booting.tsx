@@ -5,6 +5,8 @@ import { useNotificationContext } from "~/context/NotificationContext";
 import { useServerContext } from "~/context/ServersContext";
 import { useUserContext } from "~/context/UserContext";
 import { Storage } from "~/utils/services/s3";
+import Modal from "./modal";
+import Button from "./Button";
 
 export default function Booting({ children }: { children: React.ReactNode }) {
     const [opacity, setOpacity] = useState(100);
@@ -15,6 +17,7 @@ export default function Booting({ children }: { children: React.ReactNode }) {
     const { sendNotification } = useNotificationContext();
     const { servers: serversCtx, addServer } = useServerContext();
     const { setUsername } = useUserContext();
+    const [ffmpegQ, setFfmpegQ] = useState<null | boolean>(null);
 
     useEffect(() => {
         async function doStuff() {
@@ -25,11 +28,24 @@ export default function Booting({ children }: { children: React.ReactNode }) {
                 await window.api.db.initialize();
                 console.log("Database initialized");
                 const servers = await window.api.db.getServers();
-                const username = await window.api.db.getUser();
+                const user = await window.api.db.getUser();
                 console.log("Database fetch completed");
 
-                if (username) {
-                    setUsername(username.name);
+                console.log(user);
+
+                if (ffmpegQ === null || ffmpegQ === true) {
+                    const installedFfmpeg =
+                        await window.api.ffmpeg.isInstalled();
+                    const dismissQuestion = user.dismiss_ffmpeg_warning;
+
+                    if (installedFfmpeg || dismissQuestion)
+                        return setFfmpegQ(false);
+                    setFfmpegQ(true);
+                    return;
+                }
+
+                if (user) {
+                    setUsername(user.name);
                 } else {
                     setUsername(null);
                 }
@@ -95,7 +111,7 @@ export default function Booting({ children }: { children: React.ReactNode }) {
         }
 
         doStuff();
-    }, []);
+    }, [ffmpegQ]);
 
     useEffect(() => {
         if (serversCtx?.length) {
@@ -115,6 +131,40 @@ export default function Booting({ children }: { children: React.ReactNode }) {
                 transitionDuration: transitionTime.toString() + "ms",
             }}
         >
+            {ffmpegQ ? (
+                <Modal>
+                    <div className="max-w-[400px] w-full m-5 p-5 bg-[var(--bg-primary)] rounded-xl border-[var(--stroke-primary)] border-[1px]">
+                        <p className="text-center mb-2">
+                            For a better experience install ffmpeg and set it in
+                            your path environment variables
+                        </p>
+                        <div className="flex justify-center gap-2">
+                            <Button
+                                variant="primary"
+                                size="md"
+                                onClick={() => {
+                                    setFfmpegQ(false);
+                                }}
+                            >
+                                Dismiss
+                            </Button>
+                            <Button
+                                variant="primary"
+                                size="md"
+                                onClick={async () => {
+                                    await window.api.db.setDismissFfmpegWarning();
+                                    setFfmpegQ(false);
+                                }}
+                            >
+                                Dont show again
+                            </Button>
+                        </div>
+                    </div>
+                </Modal>
+            ) : (
+                ""
+            )}
+
             <p className="mb-10 font-bold text-2xl">
                 {!error ? "Developing Your Journey" : "Oh no..."}
             </p>

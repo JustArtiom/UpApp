@@ -8,6 +8,7 @@ import NotificationLayout from "~/layouts/notifications";
 import AppMainPage from ".";
 import { useServerContext } from "~/context/ServersContext";
 import { useEffect } from "react";
+import PageNotFound from "~/layouts/NotFound";
 
 function ErrorFallback({ error }: { error: any }) {
     return (
@@ -32,7 +33,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 
                 <div
                     id="appbody"
-                    className="flex-1 overflow-y-auto custom-scrollbar"
+                    className="relative flex-1 overflow-y-auto custom-scrollbar"
                 >
                     <ErrorBoundary FallbackComponent={ErrorFallback}>
                         {children}
@@ -66,7 +67,7 @@ export default function Router() {
                             path="/:server_id/:bucket_id"
                             element={<AppMainPage />}
                         />
-                        <Route path="*" element={<>404 {document.URL}</>} />
+                        <Route path="*" element={<PageNotFound />} />
                     </Routes>
                 </Booting>
             </HashRouter>

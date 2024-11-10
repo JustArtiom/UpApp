@@ -6,7 +6,8 @@ let db: Database.Database;
 const sqltables = `
 CREATE TABLE IF NOT EXISTS user (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    name VARCHAR(255)
+    name VARCHAR(255),
+    dismiss_ffmpeg_warning BOOLEAN
 );
 
 CREATE TABLE IF NOT EXISTS storages (
@@ -107,8 +108,20 @@ export const database = {
         return await database
             .queryDatabase<"run">(
                 undefined,
-                "INSERT INTO storages (ip, port, ssl, public, secret, alias) VALUES (?,?,?,?,?,?) ON CONFLICT(ip, port) DO UPDATE SET ssl = EXCLUDED.ssl, public = EXCLUDED.public, secret = EXCLUDED.secret; alias = EXCLUDED.alias",
+                `INSERT INTO storages (ip, port, ssl, public, secret, alias) 
+            VALUES (?, ?, ?, ?, ?, ?) 
+            ON CONFLICT(ip, port) 
+            DO UPDATE SET ssl = EXCLUDED.ssl, public = EXCLUDED.public, secret = EXCLUDED.secret, alias = EXCLUDED.alias`,
                 [ip, port, ssl ? 1 : 0, access, secret, alias || null]
+            )
+            .catch((err) => err);
+    },
+
+    setDismissFfmpegWarning: async (_event: Electron.IpcMainEvent) => {
+        return await database
+            .queryDatabase<"run">(
+                undefined,
+                "UPDATE user SET dismiss_ffmpeg_warning = 1"
             )
             .catch((err) => err);
     },

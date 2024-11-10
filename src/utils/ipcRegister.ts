@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { database, storage, window } from "../ipcServices";
+import { database, ffmpeg, storage, window } from "../ipcServices";
 
 export const registerIpcEvents = () => {
     ipcMain.on("window-minimize", window.minimize);
@@ -13,6 +13,7 @@ export const registerIpcEvents = () => {
     ipcMain.handle("db-get-user", database.getUser);
     ipcMain.handle("db-save-user", database.saveUser);
     ipcMain.handle("db-save-storage", database.saveStorage);
+    ipcMain.handle("db-dismiss-ffmpegw", database.setDismissFfmpegWarning);
 
     ipcMain.handle("storage-client-create", storage.createClient);
     ipcMain.handle("storage-ping", storage.ping);
@@ -21,4 +22,6 @@ export const registerIpcEvents = () => {
     ipcMain.handle("storage-fetch-bucket-files", storage.fetchBucketFiles);
     ipcMain.handle("storage-bucket-policy-update", storage.updateBucketPolicy);
     ipcMain.handle("storage-file-upload", storage.uploadFile);
+
+    ipcMain.handle("ffmpeg-is-installed", ffmpeg.isInstalled);
 };

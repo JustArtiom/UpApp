@@ -12,27 +12,35 @@ import { useParams } from "react-router-dom";
 import { useNotificationContext } from "~/context/NotificationContext";
 import { ReactComponent as ReloadIcon } from "~/assets/svg/reload.svg";
 import { Storage } from "~/utils/services/s3";
-
-const actionButtons = [
-    {
-        Icon: PlusIcon,
-        title: "Upload",
-    },
-    {
-        Icon: FolderCreateIcon,
-        title: "Create Folder",
-    },
-];
+import { ReactComponent as RowIcon } from "~/assets/svg/row.svg";
+import { ReactComponent as BlockIcon } from "~/assets/svg/block.svg";
 
 const AppMainPage = () => {
+    const actionButtons = [
+        {
+            Icon: PlusIcon,
+            title: "Upload",
+        },
+    ];
+
     const { username } = useUserContext();
     const { servers } = useServerContext();
     const { sendNotification } = useNotificationContext();
     const { server_id, bucket_id } = useParams();
     const current_server = servers?.find((x) => x.id === server_id);
     const current_bucket = bucket_id || Storage.defaultBucket;
+    const isDefaultBucket = current_bucket == Storage.defaultBucket;
     const [isOverlayVisible, setOverlayVisible] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
+    const [displayType, setDisplayType] = useState<"row" | "block">("row");
+    const [searchValue, setSearchValue] = useState("");
+
+    if (isDefaultBucket) {
+        actionButtons.push({
+            Icon: FolderCreateIcon,
+            title: "Create Folder",
+        });
+    }
 
     const handleReload = () => {
         setReloadKey((prev) => prev + 1);
@@ -57,6 +65,7 @@ const AppMainPage = () => {
 
         try {
             sendNotification(`Uploading ...`, "warning");
+
             await current_server.uploadFile(
                 current_bucket,
                 file.name,
@@ -64,11 +73,13 @@ const AppMainPage = () => {
                 undefined,
                 file.type
             );
+
             sendNotification(`Successfully uploaded ${file.name}`, "success");
-            handleReload();
         } catch (err) {
             console.error(err);
             sendNotification(err.toString(), "error");
+        } finally {
+            handleReload();
         }
     };
 
@@ -97,7 +108,10 @@ const AppMainPage = () => {
                 </div>
                 <p className="my-5 text-xl font-bold">All files</p>
                 <div className="flex my-5 gap-2 ">
-                    <SearchBar />
+                    <SearchBar
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e.target.value)}
+                    />
                     <Button
                         className="px-2 rounded-md"
                         onClick={(e) => {
@@ -121,8 +135,26 @@ const AppMainPage = () => {
                     >
                         <ReloadIcon className="w-[20px]" />
                     </Button>
+
+                    <Button
+                        onClick={() => {
+                            setDisplayType((x) =>
+                                x == "row" ? "block" : "row"
+                            );
+                        }}
+                    >
+                        {displayType == "row" ? (
+                            <RowIcon className="w-[25px]" />
+                        ) : (
+                            <BlockIcon className="w-[25px] h-[25px]" />
+                        )}
+                    </Button>
                 </div>
-                <ListClips key={reloadKey} />
+                <ListClips
+                    key={reloadKey}
+                    variant={displayType}
+                    filter={searchValue}
+                />
             </div>
             <FileDropOverlay
                 onDragLeave={handleDragLeave}

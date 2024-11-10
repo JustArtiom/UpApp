@@ -26,7 +26,8 @@ const api = {
             port: number,
             ssl: boolean,
             access: string,
-            secret: string
+            secret: string,
+            alias?: string
         ) => {
             return ipcRenderer.invoke(
                 "db-save-storage",
@@ -34,8 +35,13 @@ const api = {
                 port,
                 ssl,
                 access,
-                secret
+                secret,
+                alias
             );
+        },
+
+        setDismissFfmpegWarning: () => {
+            return ipcRenderer.invoke("db-dismiss-ffmpegw");
         },
     },
 
@@ -100,6 +106,10 @@ const api = {
                 contentType
             );
         },
+    },
+
+    ffmpeg: {
+        isInstalled: () => ipcRenderer.invoke("ffmpeg-is-installed"),
     },
 };
 

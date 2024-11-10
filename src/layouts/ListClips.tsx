@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Button from "~/components/Button";
 import Loading from "~/components/loading";
 import { useServerContext } from "~/context/ServersContext";
@@ -8,9 +8,16 @@ import { ReactComponent as FileIcon } from "~/assets/svg/file.svg";
 import FileCard from "~/components/fileCard";
 import { Storage } from "~/utils/services/s3";
 
-const ListClips = () => {
+const ListClips = ({
+    variant,
+    filter,
+}: {
+    variant: "row" | "block";
+    filter?: string;
+}) => {
     const { servers } = useServerContext();
     const { server_id, bucket_id } = useParams();
+    const navigate = useNavigate();
 
     const [buckets, setBuckets] = useState<any[]>(undefined);
     const [files, setFiles] = useState<any[]>(undefined);
@@ -18,6 +25,8 @@ const ListClips = () => {
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<string | undefined>(undefined);
     const current_server = servers?.find((x) => x.id === server_id);
+    const current_bucket = bucket_id || Storage.defaultBucket;
+    const isDefault = current_bucket === Storage.defaultBucket;
 
     // Define the fetch function
     const fetchData = useCallback(async () => {
@@ -28,9 +37,7 @@ const ListClips = () => {
         try {
             const buckets = await current_server.fetchBuckets();
             setBuckets(buckets);
-            const files = await current_server.fetchBucketFiles(
-                bucket_id || Storage.defaultBucket
-            );
+            const files = await current_server.fetchBucketFiles(current_bucket);
             setFiles(files);
             console.log(buckets);
             console.log(files);
@@ -95,34 +102,69 @@ const ListClips = () => {
         );
 
     return (
-        <div className="flex gap-3 flex-wrap">
-            {buckets
-                .filter((x) => x.name != Storage.defaultBucket)
-                .map((bucket, i) => (
+        <div className="flex flex-wrap">
+            {isDefault ? (
+                buckets
+                    .filter((x) => x.name != Storage.defaultBucket)
+                    .filter((x) =>
+                        x.name
+                            ?.toLowerCase()
+                            .includes(filter?.toLowerCase() || "")
+                    )
+                    .map((bucket, i) => (
+                        <FileCard
+                            key={i}
+                            name={bucket.name}
+                            date={bucket.creationDate}
+                            overlay={{
+                                Icon: FolderIcon,
+                            }}
+                            variant={variant}
+                            onClick={() => {
+                                navigate(
+                                    `/${current_server.id}/${bucket.name}`
+                                );
+                            }}
+                        />
+                    ))
+            ) : (
+                <FileCard
+                    name={"../"}
+                    overlay={{
+                        Icon: FolderIcon,
+                    }}
+                    variant={variant}
+                    onClick={() => {
+                        navigate(`/${current_server.id}/`);
+                    }}
+                />
+            )}
+            {files
+                .filter((x) =>
+                    x.name?.toLowerCase().includes(filter?.toLowerCase() || "")
+                )
+                .map((file, i) => (
                     <FileCard
                         key={i}
-                        name={bucket.name}
-                        date={bucket.creationDate}
+                        name={file.name}
+                        date={file.lastModified}
+                        size={file.size}
+                        bgImage={`https://i.artiom.me/cdn/.banner-${encodeURI(
+                            file.name
+                        )}.png`}
                         overlay={{
-                            Icon: FolderIcon,
+                            Icon: FileIcon,
                         }}
-                        variant="block"
+                        variant={variant}
+                        onClick={() => {
+                            navigate(
+                                `/${
+                                    current_server.id
+                                }/${current_bucket}/${encodeURI(file.name)}`
+                            );
+                        }}
                     />
                 ))}
-            {files.map((file, i) => (
-                <FileCard
-                    key={i}
-                    name={file.name}
-                    date={file.lastModified}
-                    bgImage={`https://i.artiom.me/cdn/.banner-${encodeURI(
-                        file.name
-                    )}.png`}
-                    overlay={{
-                        Icon: FileIcon,
-                    }}
-                    variant="block"
-                />
-            ))}
         </div>
     );
 };

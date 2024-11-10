@@ -4,13 +4,15 @@ export class Storage {
         port: number,
         access: string,
         secret: string,
-        ssl?: boolean
+        ssl?: boolean,
+        alias?: string
     ) {
         this.ip = ip;
         this.port = port;
         this.access = access;
         this.secret = secret;
         this.ssl = !!ssl;
+        this.alias = alias;
     }
 
     id?: string;
@@ -19,6 +21,7 @@ export class Storage {
     access!: string;
     secret!: string;
     ssl!: boolean;
+    alias?: string;
     static defaultBucket = "cdn";
 
     async createClient() {
@@ -43,7 +46,14 @@ export class Storage {
         if (!this.id)
             throw new Error("Ping the storage without initializing the client");
         const res = await window.api.db
-            .saveStorage(this.ip, this.port, this.ssl, this.access, this.secret)
+            .saveStorage(
+                this.ip,
+                this.port,
+                this.ssl,
+                this.access,
+                this.secret,
+                this.alias
+            )
             .catch((err) => err);
 
         if (res instanceof Error) throw res;

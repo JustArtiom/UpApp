@@ -4,6 +4,7 @@ import { ReactComponent as SelectedIcon } from "~/assets/svg/check.svg";
 import { ReactComponent as AddIcon } from "~/assets/svg/add.svg";
 import { ReactComponent as SettingsIcon } from "~/assets/svg/options.svg";
 import { ReactComponent as QuestionIcon } from "~/assets/svg/question.svg";
+import { ReactComponent as CoffeeIcon } from "~/assets/svg/coffee.svg";
 import { useServerContext } from "~/context/ServersContext";
 import { cn } from "~/utils";
 import { useNavigate, useParams } from "react-router-dom";
@@ -95,6 +96,11 @@ const Navigation = () => {
             <NavButton
                 Icon={QuestionIcon}
                 title="Support"
+                className="text-gray-500 hover:text-white"
+            />
+            <NavButton
+                Icon={CoffeeIcon}
+                title="Get me a coffee"
                 className="text-gray-500 hover:text-white"
             />
         </div>

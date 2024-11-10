@@ -103,6 +103,7 @@ export const storage = {
     ) => {
         return new Promise<Error | any>(async (resolve) => {
             const client = clients.get(id);
+
             if (typeof data !== "string")
                 data = Buffer.from(new Uint8Array(data));
 
