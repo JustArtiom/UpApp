@@ -26,6 +26,7 @@ if (!gotTheLock) {
             title: "UpApp",
             titleBarStyle: "hiddenInset",
             frame: false,
+            icon: "icon.ico",
             height: 900,
             width: 1100,
             webPreferences: {

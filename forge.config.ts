@@ -14,13 +14,16 @@ import { rendererConfig } from "./webpack.renderer.config";
 const config: ForgeConfig = {
     packagerConfig: {
         asar: true,
+        icon: "./icon",
     },
     rebuildConfig: {},
     makers: [
-        new MakerSquirrel({}),
-        new MakerZIP({}, ["darwin"]),
-        new MakerRpm({}),
-        new MakerDeb({}),
+        new MakerSquirrel({
+            title: "UpApp",
+            description:
+                "A minio/aws s3 client that allows you to upload and share your files easily",
+            setupIcon: "setup-icon.ico",
+        }),
     ],
     plugins: [
         new AutoUnpackNativesPlugin({}),

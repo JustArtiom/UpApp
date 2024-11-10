@@ -120,7 +120,8 @@ export const storage = {
                           }
                         : undefined
                 );
-                if (!contentType.includes("video")) resolve(true);
+                if (!contentType || !contentType.includes("video"))
+                    return resolve(true);
                 try {
                     const fpath = ffmpeg.createThumbnail(
                         undefined,
