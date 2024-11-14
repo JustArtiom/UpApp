@@ -7,8 +7,42 @@ const sqltables = `
 CREATE TABLE IF NOT EXISTS user (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     name VARCHAR(255),
-    dismiss_ffmpeg_warning BOOLEAN
+
+    -- General Settings
+    copy_url_after_upload BOOLEAN,
+    ask_before_upload BOOLEAN,
+    ffmpeg_warning BOOLEAN,
+    ffmpeg_hardware_acceleration BOOLEAN,
+
+    -- Video Settings
+    video_compression BOOLEAN,
+    video_thumbnail BOOLEAN,
+    video_thumbnail_resolution INT,           -- Example: 240 for 240p, 480 for 480p
+    video_thumbnail_position INT,             -- Frame capture position in seconds
+    video_thumbnail_format VARCHAR(8),        -- e.g., 'jpeg', 'png'
+    video_quality_level INT,                  -- Compression level (0-51 in FFmpeg, lower is better)
+    video_resolution VARCHAR(16),             -- e.g., '1920x1080'
+    video_bitrate INT,                        -- e.g., 800000 (in bits per second)
+    video_framerate INT,                      -- Frames per second
+    video_codec VARCHAR(255),                 -- e.g., 'h264', 'vp9', 'hevc'
+    video_encoding_speed VARCHAR(16),         -- e.g., 'ultrafast', 'medium', 'slow'
+
+    -- Advanced Video Settings
+    video_bitrate_mode VARCHAR(16),           -- e.g., 'CBR' (Constant Bit Rate) or 'VBR' (Variable Bit Rate)
+    video_keyframe_interval INT,              -- Keyframe distance in frames
+
+    -- Audio Settings
+    audio_compression BOOLEAN,
+    audio_bitrate INT,                        -- e.g., 128000 (in bits per second)
+    audio_channels INT,                       -- Mono (1), Stereo (2)
+    audio_codec VARCHAR(255),                 -- e.g., 'aac', 'mp3', 'opus'
+    audio_sample_rate INT,                    -- e.g., 44100, 48000
+
+    -- Image Settings
+    image_compression BOOLEAN,
+    image_quality INT                         -- e.g., 85 for JPEG quality scale (0-100)
 );
+
 
 CREATE TABLE IF NOT EXISTS storages (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -17,33 +51,9 @@ CREATE TABLE IF NOT EXISTS storages (
     ssl BOOLEAN NOT NULL,
     public TEXT NOT NULL,
     secret TEXT NOT NULL,
+    default_selected BOOLEAN,
     alias VARCHAR(255),
     UNIQUE(ip, port)
-);
-
-CREATE TABLE IF NOT EXISTS videos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    size INTEGER NOT NULL,
-    path TEXT NOT NULL,
-    name TEXT NOT NULL,
-    created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    server_id INTEGER,
-    saved BOOLEAN NOT NULL,
-    FOREIGN KEY (server_id) REFERENCES storages(id) ON DELETE SET NULL
-);
-
-CREATE TABLE IF NOT EXISTS labels (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    name TEXT NOT NULL,
-    colour CHAR(7) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS labeled_videos (
-    video_id INTEGER NOT NULL,
-    label_id INTEGER NOT NULL,
-    PRIMARY KEY (video_id, label_id),
-    FOREIGN KEY (video_id) REFERENCES videos(id) ON DELETE CASCADE,
-    FOREIGN KEY (label_id) REFERENCES labels(id) ON DELETE CASCADE
 );
 `;
 

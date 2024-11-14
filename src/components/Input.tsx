@@ -1,10 +1,5 @@
 import { cva, VariantProps } from "class-variance-authority";
-import {
-    ButtonHTMLAttributes,
-    FC,
-    forwardRef,
-    InputHTMLAttributes,
-} from "react";
+import { forwardRef, InputHTMLAttributes } from "react";
 import { cn } from "~/utils";
 
 const inputVariants = cva("placeholder-gray-600", {
@@ -12,11 +7,9 @@ const inputVariants = cva("placeholder-gray-600", {
         variant: {
             transparent: "bg-transparent",
         },
-
         border: {
             primary: "border-[1px] border-[var(--stroke-primary)]",
         },
-
         sizeType: {
             md: "px-4 py-3 rounded-xl",
         },
@@ -34,7 +27,7 @@ interface InputProps
     divClassName?: string;
 }
 
-const Input: FC<InputProps> = forwardRef<HTMLInputElement, InputProps>(
+const Input = forwardRef<HTMLInputElement, InputProps>(
     (
         {
             className,
