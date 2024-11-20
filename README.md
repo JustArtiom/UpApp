@@ -30,7 +30,7 @@ For an enhanced experience, we recommend installing FFMPEG. It enables advanced 
 
 See UpApp in action! Watch how easily you can upload, manage, and share files with a few simple clicks:
 
-![Demo](./example/demo.gif)
+![Demo](./.example/demo.gif)
 
 ---
 

@@ -5,7 +5,7 @@ import { plugins } from "./webpack.plugins";
 import path from "path";
 
 export const mainConfig: Configuration = {
-    entry: "./src/index.ts",
+    entry: "./src/process/index.ts",
     module: {
         rules,
     },
@@ -13,7 +13,7 @@ export const mainConfig: Configuration = {
     resolve: {
         extensions: [".js", ".ts", ".jsx", ".tsx", ".css", ".json", ".svg"],
         alias: {
-            "~": path.resolve(__dirname, "src/"),
+            "~": path.resolve(__dirname, "src/ui/"),
         },
     },
 };

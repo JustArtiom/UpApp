@@ -1,8 +1,5 @@
 import type { ForgeConfig } from "@electron-forge/shared-types";
 import { MakerSquirrel } from "@electron-forge/maker-squirrel";
-import { MakerZIP } from "@electron-forge/maker-zip";
-import { MakerDeb } from "@electron-forge/maker-deb";
-import { MakerRpm } from "@electron-forge/maker-rpm";
 import { AutoUnpackNativesPlugin } from "@electron-forge/plugin-auto-unpack-natives";
 import { WebpackPlugin } from "@electron-forge/plugin-webpack";
 import { FusesPlugin } from "@electron-forge/plugin-fuses";
@@ -34,16 +31,17 @@ const config: ForgeConfig = {
                 config: rendererConfig,
                 entryPoints: [
                     {
-                        html: "./src/index.html",
-                        js: "./src/renderer.ts",
+                        html: "./src/ui/index.html",
+                        js: "./src/ui/renderer.ts",
                         name: "main_window",
                         preload: {
-                            js: "./src/preload.ts",
+                            js: "./src/ui/preload.ts",
                         },
                     },
                 ],
             },
         }),
+
         // Fuses are used to enable/disable various Electron functionality
         // at package time, before code signing the application
         new FusesPlugin({
