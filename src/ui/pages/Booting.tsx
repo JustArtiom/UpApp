@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useErrorBoundary } from "react-error-boundary";
+import { useLocation } from "react-router-dom";
 import Loading from "~/components/Loading";
 import { useSettingsContext } from "~/context/SettingsContext";
 import useRedirect from "~/hooks/useRedirect";
@@ -10,6 +11,11 @@ const Booting = ({ children }: { children: React.ReactNode }) => {
     const { showBoundary } = useErrorBoundary();
     const { setSettings } = useSettingsContext();
     const redirect = useRedirect();
+    const location = useLocation();
+
+    useEffect(() => {
+        console.log(`Location: ${location.pathname}${location.hash}`);
+    }, [location]);
 
     const SetupProject = async () => {
         console.log("Booting...");
@@ -32,7 +38,9 @@ const Booting = ({ children }: { children: React.ReactNode }) => {
 
         const servers = await window.api.db.getServers();
         console.log(
-            "Loaded servers: ",
+            "Loaded",
+            servers.length,
+            "server(s): ",
             servers.map(({ password, username, ...props }) => props)
         );
 

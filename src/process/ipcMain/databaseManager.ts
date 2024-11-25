@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS settings (
 );
 
 
-CREATE TABLE IF NOT EXISTS servers (
+CREATE TABLE IF NOT EXISTS server (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     ip VARCHAR(255) NOT NULL,
     port INTEGER NOT NULL,
@@ -107,6 +107,30 @@ export const databaseManager = {
     ),
 
     getServers: catchAndReturn(() => {
-        return q(`SELECT * FROM servers`);
+        return q(`SELECT * FROM server`);
     }),
+
+    saveServer: catchAndReturn(
+        (
+            _event: Electron.IpcMainEvent,
+            ip: string,
+            port: number,
+            ssl: boolean,
+            access: string,
+            secret: string,
+            alias?: string
+        ) => {
+            return q(
+                `INSERT INTO server (ip, port, ssl, username, password, alias) 
+                VALUES (?, ?, ?, ?, ?, ?) 
+                ON CONFLICT(ip, port) 
+                DO UPDATE SET 
+                    ssl = EXCLUDED.ssl, 
+                    username = EXCLUDED.username, 
+                    password = EXCLUDED.password, 
+                    alias = EXCLUDED.alias`,
+                [ip, port, ssl ? 1 : 0, access, secret, alias || null]
+            );
+        }
+    ),
 };

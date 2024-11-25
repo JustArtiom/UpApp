@@ -12,7 +12,6 @@ const Name = () => {
     const [isLoading, setLoading] = useState(false);
 
     useEffect(() => {
-        console.log("Enter name page");
         console.log("Next redirect", redirectTo);
 
         if (typeof settings?.name == "string") {

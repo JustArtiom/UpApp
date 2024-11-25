@@ -45,3 +45,9 @@ export interface DBServer {
     default_selected: number;
     alias?: string;
 }
+
+export interface Notification {
+    id: number;
+    type: "error" | "warn" | "success";
+    data: string;
+}

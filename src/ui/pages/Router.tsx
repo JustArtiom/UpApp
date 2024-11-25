@@ -7,20 +7,20 @@ import Name from "./Name";
 
 const Router = () => {
     return (
-        <RouterLayout>
-            <HashRouter>
+        <HashRouter>
+            <RouterLayout>
                 <Booting>
                     <Routes>
                         <Route path="/" element={<Main />} />
                         <Route path="/name" element={<Name />} />
                         <Route path="/add-server" element={<AddServer />} />
+                        <Route path="/settings" element={<p>Settings</p>} />
                         <Route
                             path="/app"
                             element={
                                 <p>Server Auto Select {window.location.href}</p>
                             }
                         />
-                        <Route path="/app/settings" element={<p>Settings</p>} />
                         <Route
                             path="/app/:server_id"
                             element={<p>Server & auto bucket select</p>}
@@ -35,8 +35,8 @@ const Router = () => {
                         />
                     </Routes>
                 </Booting>
-            </HashRouter>
-        </RouterLayout>
+            </RouterLayout>
+        </HashRouter>
     );
 };
 

@@ -3,14 +3,17 @@ import { ReactComponent as MinMaxIcon } from "~/assets/svg/minmax.svg";
 import { ReactComponent as MinimiseIcon } from "~/assets/svg/minimise.svg";
 import { ReactComponent as MoonIcon } from "~/assets/svg/moon.svg";
 import { ReactComponent as SunIcon } from "~/assets/svg/sun.svg";
+import { ReactComponent as SettingsIcon } from "~/assets/svg/settings.svg";
 
 import Button from "~/components/Button";
 import { useEffect, useState } from "react";
 import { useSettingsContext } from "~/context/SettingsContext";
+import useRedirect from "~/hooks/useRedirect";
 
 export default function ActionBar() {
     const { settings, updateSettings } = useSettingsContext();
     const [lightMode, setLightMode] = useState(0);
+    const redirect = useRedirect();
 
     useEffect(() => {
         if (!settings) return;
@@ -30,6 +33,13 @@ export default function ActionBar() {
             SVG: lightMode ? SunIcon : MoonIcon,
             action: () => {
                 updateSettings({ light_mode: settings.light_mode ? 0 : 1 });
+            },
+        },
+        {
+            name: "settings",
+            SVG: SettingsIcon,
+            action: () => {
+                redirect("/settings");
             },
         },
         {

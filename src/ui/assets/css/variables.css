@@ -2,6 +2,8 @@
     --primary: #0f0f0f;
     --secondary: #1d1d1d;
     --danger: #ef4444;
+    --success: rgb(0, 255, 94);
+    --warn: rgb(234 179 8);
 
     --text-primary: #ffffff;
     --text-secondary: #757575;
@@ -16,7 +18,7 @@
 .light {
     --primary: #f5f5f5;
     --secondary: #e0e0e0;
-    --danger: #ef4444;
+    --success: rgb(0, 193, 71);
 
     --text-primary: #000000;
     --text-secondary: #505050;

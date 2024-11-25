@@ -8,6 +8,11 @@ const inputVariants = cva("placeholder-gray-600", {
             primary:
                 "bg-transparent border-[1px] border-[var(--stroke-primary)]",
         },
+
+        border: {
+            error: "border-[var(--danger)]",
+        },
+
         sizeType: {
             md: "px-4 py-3 rounded-xl",
         },
@@ -37,6 +42,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             labelTitle,
             sizeType,
             optional,
+            border,
             ...props
         },
         ref
@@ -46,7 +52,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 {labelTitle ? (
                     <label
                         htmlFor={id}
-                        className="text-lg font-medium ml-3 mb-3"
+                        className="text-lg font-medium ml-3 mb-2"
                     >
                         {labelTitle}{" "}
                         {optional ? (
@@ -66,7 +72,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                     name={id}
                     {...props}
                     className={cn(
-                        inputVariants({ className, variant, sizeType }),
+                        inputVariants({ className, variant, sizeType, border }),
                         "placeholder-text-secondary"
                     )}
                 />

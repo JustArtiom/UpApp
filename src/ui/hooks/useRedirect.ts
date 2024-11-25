@@ -20,7 +20,7 @@ const useRedirect = (id: string = "app-body") => {
     return async (url: string, duration: false | number = 300) => {
         if (elemRef.current && duration) {
             elemRef.current.style.opacity = "0";
-            await sleep(duration); // Animation
+            await sleep(duration);
             elemRef.current.style.opacity = "1";
         }
 
