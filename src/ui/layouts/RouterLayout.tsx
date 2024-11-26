@@ -3,6 +3,7 @@ import ActionBar from "~/components/ActionBar";
 import ErrorFallback from "./ErrorFallback";
 import AllContextProvider from "~/context";
 import NotificationLayout from "./NotificationLayout";
+import ModalDisplay from "./ModalDisplay";
 
 const RouterLayout = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -10,10 +11,12 @@ const RouterLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="w-full h-screen flex flex-col">
                 <ActionBar />
                 <NotificationLayout />
+
                 <div
                     id="app-body" // The root body of the app
                     className="relative w-full flex-1 overflow-y-auto transition-opacity"
                 >
+                    <ModalDisplay />
                     <ErrorBoundary fallbackRender={ErrorFallback}>
                         {children}
                     </ErrorBoundary>

@@ -96,7 +96,6 @@ const Main = () => {
                                     placeholder: "127.0.0.1",
                                     type: "text",
                                     divClassName: "flex-1 min-w-[250px]",
-                                    defaultValue: "jet1.artiom.me",
                                     border: fieldErrors.ip
                                         ? "error"
                                         : undefined,
@@ -111,7 +110,6 @@ const Main = () => {
                                     placeholder: "6969",
                                     type: "number",
                                     divClassName: "md:w-[120px] w-full ",
-                                    defaultValue: "9002",
                                     border: fieldErrors.port
                                         ? "error"
                                         : undefined,
@@ -125,8 +123,7 @@ const Main = () => {
                         attributes: {
                             id: "server_alias",
                             labelTitle: "Proxy / Alias",
-                            placeholder: "https://i.artiom.me",
-                            defaultValue: "https://i.artiom.me",
+                            placeholder: "https://example.com",
                             type: "text",
                             border: fieldErrors.alias ? "error" : undefined,
                             optional: true,
@@ -137,8 +134,7 @@ const Main = () => {
                         attributes: {
                             id: "server_username",
                             labelTitle: "Username",
-                            placeholder: "Artiomka",
-                            defaultValue: "WlK9YJ1giBS0y8eX6sabTXpYXdiZmmTx",
+                            placeholder: "JohnCena",
                             type: "text",
                             border: fieldErrors.user ? "error" : undefined,
                             required: true,
@@ -150,7 +146,6 @@ const Main = () => {
                             id: "server_password",
                             labelTitle: "Password",
                             placeholder: "shhh...",
-                            defaultValue: "rcr5Lt6IhVVCJIZvNW9lLvUpMJppUZXE",
                             border: fieldErrors.password ? "error" : undefined,
                             type: "password",
                         },

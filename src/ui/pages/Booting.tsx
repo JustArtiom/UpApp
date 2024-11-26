@@ -2,14 +2,19 @@ import { useEffect, useState } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { useLocation } from "react-router-dom";
 import Loading from "~/components/Loading";
+import { useNotificationContext } from "~/context/NotificationContext";
+import { useServerContext } from "~/context/ServersContext";
 import { useSettingsContext } from "~/context/SettingsContext";
 import useRedirect from "~/hooks/useRedirect";
+import { S3 } from "~/utils/s3";
 import sleep from "~/utils/sleep";
 
 const Booting = ({ children }: { children: React.ReactNode }) => {
     const [isLoaded, setLoaded] = useState(false);
     const { showBoundary } = useErrorBoundary();
     const { setSettings } = useSettingsContext();
+    const { sendNotification } = useNotificationContext();
+    const { addServer } = useServerContext();
     const redirect = useRedirect();
     const location = useLocation();
 
@@ -43,6 +48,35 @@ const Booting = ({ children }: { children: React.ReactNode }) => {
             "server(s): ",
             servers.map(({ password, username, ...props }) => props)
         );
+
+        for (let server of servers) {
+            const s3 = new S3(
+                server.ip,
+                server.port,
+                server.username,
+                server.password,
+                !!server.ssl,
+                server.alias
+            );
+
+            await s3.createClient();
+
+            try {
+                await s3.ping();
+                console.log("Server", s3.id, "successfully pinged");
+            } catch (err) {
+                console.error("Error fetching the servers", err);
+                sendNotification(
+                    "The server " +
+                        (s3.alias_domain || s3.id) +
+                        " couldnt be reached",
+                    "warn"
+                );
+            }
+
+            addServer(s3);
+            console.log("Added", s3.id, "to the context");
+        }
 
         await sleep(1000);
 
