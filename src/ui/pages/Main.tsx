@@ -5,10 +5,11 @@ import { ServerDataProvider } from "~/context/ServerDataContext";
 import { useServerContext } from "~/context/ServersContext";
 import useRedirect from "~/hooks/useRedirect";
 import ServerLayout from "~/layouts/ServerLayout";
+import { S3 } from "~/utils/s3";
 
 const Main = () => {
     const { servers } = useServerContext();
-    const { server_id } = useParams();
+    const { server_id, bucket_id } = useParams();
     const redirect = useRedirect("server-body");
     const current_server = servers.find((x) => x.id == server_id);
 
@@ -18,6 +19,9 @@ const Main = () => {
             return;
         } else if (!current_server) {
             console.warn("No servers available to select");
+            return;
+        } else if (!bucket_id) {
+            redirect(`/app/${server_id}/${S3.defaultBucket}`);
             return;
         }
 

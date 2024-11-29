@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS settings (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     name VARCHAR(255),
     light_mode BOOLEAN DEFAULT 0,
+    file_list_type INT DEFAULT 0,
 
     -- General Settings
     copy_url_after_upload BOOLEAN DEFAULT 1,

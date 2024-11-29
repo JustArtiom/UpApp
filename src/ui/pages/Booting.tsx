@@ -64,6 +64,11 @@ const Booting = ({ children }: { children: React.ReactNode }) => {
             try {
                 await s3.ping();
                 console.log("Server", s3.id, "successfully pinged");
+
+                const bkts = await s3.fetchBuckets();
+                if (!bkts.find((x) => x.name === S3.defaultBucket)) {
+                    await s3.createBucket(S3.defaultBucket);
+                }
             } catch (err) {
                 console.error("Error fetching the servers", err);
                 sendNotification(

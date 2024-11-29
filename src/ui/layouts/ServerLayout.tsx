@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Button from "~/components/Button";
+import Checkbox from "~/components/Checkbox";
 import Loading from "~/components/Loading";
 import { useServerDataContext } from "~/context/ServerDataContext";
 import { useSettingsContext } from "~/context/SettingsContext";
@@ -7,7 +8,7 @@ import useRedirect from "~/hooks/useRedirect";
 
 const ServerLayout = () => {
     const redirect = useRedirect();
-    const { s3, updateBuckets, bucketsLoading, updateFiles, filesLoading } =
+    const { s3, updateBuckets, updateFiles, currentBucket } =
         useServerDataContext();
     const { settings } = useSettingsContext();
 
@@ -37,7 +38,7 @@ const ServerLayout = () => {
             </div>
         );
 
-    if (bucketsLoading)
+    if (!currentBucket)
         return (
             <div className="flex-1 flex flex-col items-center justify-center">
                 <p className="text-xl font-semibold mb-5">
@@ -48,10 +49,21 @@ const ServerLayout = () => {
         );
 
     return (
-        <div className="flex-1">
-            <p className="text-2xl m-5 font-bold">
+        <div className="flex-1 p-5">
+            <p className="text-2xl mb-5 font-bold">
                 Hello, {settings.name || "human"}
             </p>
+            <p className="font-medium text-xl mb-2">
+                Folder: /{currentBucket.name}
+            </p>
+            <div className="grid mb-2">
+                <Checkbox
+                    variant="toggle"
+                    labelText="Public folder"
+                    labelClassName="text-primary"
+                />
+            </div>
+            <div></div>
         </div>
     );
 };

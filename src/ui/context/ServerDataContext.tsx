@@ -1,10 +1,18 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+    createContext,
+    useContext,
+    useState,
+    ReactNode,
+    useEffect,
+} from "react";
+import { useParams } from "react-router-dom";
 import { S3 } from "~/utils/s3";
 import { Bucket, BucketFile } from "~/utils/types";
 
 interface ServerDataContextType {
     s3: S3;
     buckets: any[];
+    currentBucket: Bucket | undefined;
     files: any[];
     bucketsLoading: boolean;
     filesLoading: boolean;
@@ -23,10 +31,20 @@ export const ServerDataProvider = ({
     children: ReactNode;
     s3: S3;
 }) => {
+    const { bucket_id } = useParams();
     const [buckets, setBuckets] = useState<Bucket[]>([]);
     const [bucketsLoading, setBucketsLoading] = useState(true);
     const [files, setFiles] = useState<any[]>([]);
     const [filesLoading, setFilesLoading] = useState(true);
+    const [currentBucket, setCurrentBucket] = useState<Bucket | undefined>(
+        undefined
+    );
+
+    useEffect(() => {
+        setCurrentBucket(
+            buckets.find((x) => x.name === bucket_id) || undefined
+        );
+    }, [buckets, bucket_id]);
 
     const updateBuckets = async (showLoading: boolean = true) => {
         if (showLoading) setBucketsLoading(true);
@@ -50,6 +68,7 @@ export const ServerDataProvider = ({
                 s3,
                 buckets,
                 files,
+                currentBucket,
                 bucketsLoading,
                 filesLoading,
                 updateBuckets,
