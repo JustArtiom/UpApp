@@ -122,7 +122,7 @@ const Notification: FC<{
             onMouseLeave={handleMouseLeave}
         >
             <div
-                className="absolute top-0 left-0 h-[2px] rounded-t-md"
+                className="absolute top-0 left-0 h-[3px] rounded-t-[1000px]"
                 style={{
                     width: `${progress}%`,
                     backgroundColor: color,
@@ -148,7 +148,7 @@ const Notification: FC<{
                 )}
                 <CloseIcon height={18} className="mr-1 cursor-pointer" />
             </div>
-            <p>{data}</p>
+            <p className="words-break max-h-[300px] overflow-y-auto">{data}</p>
         </div>
     );
 };

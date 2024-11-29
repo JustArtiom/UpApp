@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import Form from "~/components/Form";
+import { useServerContext } from "~/context/ServersContext";
 import useRedirect from "~/hooks/useRedirect";
 import { S3 } from "~/utils/s3";
 
 const Main = () => {
     const redirect = useRedirect();
+    const { servers, addServer } = useServerContext();
     const [animate, runAnimation] = useState(false);
     const [opacity, setOpacity] = useState(0);
     const [isLoading, setLoading] = useState(false);
@@ -59,6 +61,8 @@ const Main = () => {
             console.log("Server responded successfully");
 
             await s3.saveInDatabase();
+
+            redirect(`/app/${s3.id}`);
         } catch (err) {
             console.error("Error while loading the server.", err);
         } finally {
@@ -179,6 +183,19 @@ const Main = () => {
                             type: "submit",
                             children: "Connect",
                             className: "w-[120px] h-[50px] mx-auto my-2",
+                        },
+                    },
+                    {
+                        type: "button",
+                        attributes: {
+                            children: "Go to the app",
+                            className:
+                                "border-none hover:bg-primary p-0 text-secondary",
+                            onClick: (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                redirect("/app");
+                            },
                         },
                     },
                 ]}

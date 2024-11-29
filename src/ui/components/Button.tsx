@@ -7,6 +7,8 @@ const buttonVariants = cva("flex items-center justify-center", {
     variants: {
         variant: {
             primary: "border-stroke-primary hover:bg-secondary",
+            success: "border-success hover:bg-success",
+            warn: "border-warn hover:bg-warn",
             danger: "border-danger hover:bg-danger",
         },
 

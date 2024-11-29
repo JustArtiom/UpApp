@@ -13,7 +13,10 @@ export const ServerProvider = ({ children }: { children: ReactNode }) => {
     const [servers, setServers] = useState<S3[]>([]);
 
     const addServer = (server: S3) => {
-        setServers((prev) => [...prev, server]);
+        setServers((prev) => {
+            const filtered = prev.filter((x) => x.id !== server.id);
+            return [...filtered, server];
+        });
     };
 
     const removeServer = (id: string) => {

@@ -1,6 +1,6 @@
 import { contextBridge, IpcRenderer, ipcRenderer } from "electron";
 import throwIfError from "./utils/throwIfError";
-import { DBServer, DBSettings } from "./utils/types";
+import { Bucket, BucketFile, DBServer, DBSettings } from "./utils/types";
 
 interface CustomIpcRenderer extends IpcRenderer {
     invoke<T>(channel: string, ...args: any[]): Promise<T>;
@@ -60,7 +60,9 @@ const api = {
             ipcRenderer.invoke("st-ping", id).then(throwIfError),
 
         fetchBuckets: (id: string) => {
-            return ipcRenderer.invoke("st-fetch-buckets", id);
+            return ipcRenderer.invoke("st-fetch-buckets", id) as Promise<
+                Bucket[]
+            >;
         },
 
         createBucket: (id: string, name: string) => {
@@ -77,7 +79,11 @@ const api = {
         },
 
         fetchBucketFiles: (id: string, bucket: string) => {
-            return ipcRenderer.invoke("st-fetch-bucket-files", id, bucket);
+            return ipcRenderer.invoke(
+                "st-fetch-bucket-files",
+                id,
+                bucket
+            ) as Promise<BucketFile[]>;
         },
 
         uploadFile: (

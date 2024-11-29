@@ -105,9 +105,7 @@ export class S3 {
         if (!this.id)
             throw new Error("Ping the storage without initializing the client");
 
-        const res = await window.api.storage
-            .fetchBuckets(this.id)
-            .catch((err) => err);
+        const res = await window.api.storage.fetchBuckets(this.id);
 
         if (res instanceof Error) throw res;
         return res;
@@ -117,9 +115,7 @@ export class S3 {
         if (!this.id)
             throw new Error("Ping the storage without initializing the client");
 
-        const res = await window.api.storage
-            .fetchBucketFiles(this.id, bucket)
-            .catch((err) => err);
+        const res = await window.api.storage.fetchBucketFiles(this.id, bucket);
 
         if (res instanceof Error) throw res;
         return res;

@@ -17,7 +17,7 @@ const useRedirect = (id: string = "app-body") => {
         };
     }, [id]);
 
-    return async (url: string, duration: false | number = 300) => {
+    return async (url: string | number, duration: false | number = 300) => {
         if (elemRef.current && duration) {
             elemRef.current.style.opacity = "0";
             await sleep(duration);
@@ -25,7 +25,11 @@ const useRedirect = (id: string = "app-body") => {
         }
 
         console.log("Redirecting to", url);
-        navigateTo(url);
+        if (typeof url === "number") {
+            navigateTo(url);
+        } else {
+            navigateTo(url);
+        }
     };
 };
 

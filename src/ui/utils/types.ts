@@ -51,3 +51,15 @@ export interface Notification {
     type: "error" | "warn" | "success";
     data: string;
 }
+
+export interface Bucket {
+    creationDate: Date;
+    name: string;
+}
+
+export interface BucketFile {
+    etag: string;
+    lastModified: Date;
+    name: string;
+    size: number;
+}

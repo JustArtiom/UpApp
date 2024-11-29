@@ -85,7 +85,7 @@ const Booting = ({ children }: { children: React.ReactNode }) => {
                 "/name?redirectTo=" + (servers.length ? "/app" : "/add-server")
             );
         else if (!servers.length) await redirect("/add-server");
-        else await redirect("/");
+        else await redirect("/app");
         setLoaded(true);
     };
 
